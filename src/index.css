@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+  
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-dark: #0F172A;
+  --color-border: #E2E8F0;
+  --color-background: #FFFFFF;
+  --color-section: #F8FAFC;
+  --color-success: #10B981;
+}
+
+/* Custom Base Styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-dark);
+  overflow-x: hidden;
+}
+
+/* Glassmorphism overlays */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+}
+
+.glass-panel-dark {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+}
+
+/* Custom Marquee Speed & Animation Logic */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 40s linear infinite;
+}
+
+.animate-marquee:hover, .animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
