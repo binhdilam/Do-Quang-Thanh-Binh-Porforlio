@@ -1,6 +1,7 @@
 import { Award, Mail, Phone, Clock, ChevronRight, Check } from "lucide-react";
 import { motion } from "motion/react";
 import { translations } from "../translations";
+import profileImg from "../assets/images/howard_profile_1781341630092.jpeg";
 
 interface HeroProps {
   lang: "en" | "vi";
@@ -104,7 +105,7 @@ export default function Hero({ lang, handleScrollTo }: HeroProps) {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-8">
               <div className="relative flex-shrink-0">
                 <img 
-                  src="/src/assets/images/howard_profile_1781341630092.jpeg" 
+                  src={profileImg} 
                   alt="Profile" 
                   className="w-24 h-24 rounded-full object-cover border border-slate-200 shadow-sm relative z-10"
                   referrerPolicy="no-referrer"

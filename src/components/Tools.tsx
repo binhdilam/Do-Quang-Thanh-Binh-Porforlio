@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Cpu, Code, MessageCircleCode, Play, Share2, ExternalLink, Activity, Network, ZoomIn, X } from "lucide-react";
+import automationImg from "../assets/images/z7311460893031_0b4a561d4b596c27dde94fb13e549a2e.jpg";
 
 interface ToolsProps {
   lang: "en" | "vi";
@@ -91,7 +92,7 @@ export default function Tools({ lang }: ToolsProps) {
                 onClick={() => setIsZoomed(true)}
               >
                 <img 
-                  src="src/assets/images/z7311460893031_0b4a561d4b596c27dde94fb13e549a2e.jpg" 
+                  src={automationImg} 
                   alt="Automation Workflow"
                   className="w-full h-auto max-h-[70vh] object-contain hover:scale-[1.01] transition-transform duration-500 relative z-10"
                   referrerPolicy="no-referrer"
@@ -129,7 +130,7 @@ export default function Tools({ lang }: ToolsProps) {
           </button>
           
           <img 
-            src="src/assets/images/z7311460893031_0b4a561d4b596c27dde94fb13e549a2e.jpg" 
+            src={automationImg} 
             alt="Automation Workflow Zoomed"
             className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl border border-slate-700 cursor-default bg-white"
             onClick={(e) => e.stopPropagation()}

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { FileText, Target, ShieldCheck, Layers, Award, ClipboardList, Monitor, Eye, X, MousePointerClick } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import tiktokImg from "../assets/images/Video - Manual ads (1).png";
+import googleAdsImg from "../assets/images/google_ads_screenshot_1782122830120_1782124076785.png";
+import metaAdsImg from "../assets/images/meta_ads_screenshot_1782122830121_1782124095683.png";
+import leadGenImg from "../assets/images/Lead Generation.png";
 
 interface CaseStudiesProps {
   lang: "en" | "vi";
@@ -97,7 +101,7 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
       return (
         <div className="w-full h-full bg-white flex items-center justify-center overflow-hidden rounded-xl border border-slate-200/60 shadow-2xs">
           <img
-            src="src/assets/images/Video - Manual ads (1).png"
+            src={tiktokImg}
             alt="TikTok Shop Ads Report Screenshot"
             className="w-full h-full object-cover md:object-contain rounded-xl hover:scale-102 transition-transform duration-500"
             referrerPolicy="no-referrer"
@@ -142,7 +146,7 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                src="/src/assets/images/google_ads_screenshot_1782122830120_1782124076785.png"
+                src={googleAdsImg}
                 alt="Google Ads Case Study Mockup"
                 className="w-full h-full object-cover md:object-contain rounded-xl hover:scale-102 transition-transform duration-500"
                 referrerPolicy="no-referrer"
@@ -154,7 +158,7 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                src="/src/assets/images/meta_ads_screenshot_1782122830121_1782124095683.png"
+                src={metaAdsImg}
                 alt="Meta Ads Case Study Mockup"
                 className="w-full h-full object-cover md:object-contain rounded-xl hover:scale-102 transition-transform duration-500"
                 referrerPolicy="no-referrer"
@@ -168,7 +172,7 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
       return (
         <div className="w-full h-full bg-white flex items-center justify-center overflow-hidden rounded-xl border border-slate-200/60 shadow-2xs">
           <img
-            src="src/assets/images/Lead Generation.png"
+            src={leadGenImg}
             alt="Lead Generation Setup"
             className="w-full h-full object-cover md:object-contain rounded-xl hover:scale-102 transition-transform duration-500"
             referrerPolicy="no-referrer"
