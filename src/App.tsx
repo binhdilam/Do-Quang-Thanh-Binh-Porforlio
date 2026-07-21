@@ -1,106 +1,79 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import Metrics from "./components/Metrics";
+import Showcase from "./components/Showcase";
 import Platforms from "./components/Platforms";
 import Scope from "./components/Scope";
 import Tools from "./components/Tools";
-import CaseStudies from "./components/CaseStudies";
+import FreeTools from "./components/FreeTools";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
+import { useReveal, useActiveSection } from "./hooks/useReveal";
+
+const SECTION_IDS = [
+  "about",
+  "showcase",
+  "platforms",
+  "scope",
+  "tools",
+  "tools-free",
+  "contact",
+];
 
 export default function App() {
   const [lang, setLang] = useState<"en" | "vi">("en");
   const [activeSection, setActiveSection] = useState("about");
 
-  // Smooth scroll handler
-  const handleScrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(id);
-    }
-  };
+  const ids = useMemo(() => SECTION_IDS, []);
 
-  // Tracking scroll position for sticky nav highlights
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["about", "metrics", "cases", "platforms", "scope", "tools", "contact"];
-      const scrollPos = window.scrollY + 220;
+  // Scroll reveals + nav highlighting, both IntersectionObserver driven
+  useReveal();
+  useActiveSection(ids, setActiveSection);
 
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const handleScrollTo = useCallback((id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 flex flex-col antialiased">
-      
-      {/* Sticky Premium Header / Navigation */}
-      <Header 
-        lang={lang} 
-        setLang={setLang} 
-        activeSection={activeSection} 
-        handleScrollTo={handleScrollTo} 
+    <div className="grain flex min-h-[100dvh] flex-col bg-paper text-ink antialiased">
+      <a
+        href="#main"
+        className="skip-link rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white"
+      >
+        {lang === "en" ? "Skip to content" : "Tới nội dung chính"}
+      </a>
+
+      <Header
+        lang={lang}
+        setLang={setLang}
+        activeSection={activeSection}
+        handleScrollTo={handleScrollTo}
       />
 
-      {/* Main Sections Body */}
-      <main className="flex-grow">
-        
-        {/* About / Hero Profile Presentation */}
-        <Hero 
-          lang={lang} 
-          handleScrollTo={handleScrollTo} 
-        />
+      <main id="main" className="flex-grow">
+        {/* Who, the headline figures, and the brand strip */}
+        <Hero lang={lang} handleScrollTo={handleScrollTo} />
 
-        {/* Real-world Data Metrics & Brand Carousel highlights */}
-        <Metrics 
-          lang={lang} 
-        />
+        {/* The proof: real account dashboards */}
+        <Showcase lang={lang} />
 
-        {/* Case Studies Deep Dive Audits */}
-        <CaseStudies 
-          lang={lang} 
-        />
+        {/* Where budget goes and what it is asked to do */}
+        <Platforms lang={lang} />
 
-        {/* Media Allocation Strategies */}
-        <Platforms 
-          lang={lang} 
-        />
+        {/* How the work actually runs */}
+        <Scope lang={lang} />
 
-        {/* Steps Timeline block */}
-        <Scope 
-          lang={lang} 
-        />
+        {/* Tooling */}
+        <Tools lang={lang} />
 
-        {/* Tools & Integrated Stack */}
-        <Tools 
-          lang={lang} 
-        />
+        {/* Free TikTok GMV Max reporting tool */}
+        <FreeTools lang={lang} />
 
-        {/* Secure Lead Intake Contact Form */}
-        <ContactForm 
-          lang={lang} 
-        />
-
+        {/* Lead intake */}
+        <ContactForm lang={lang} />
       </main>
 
-      {/* Professional Footer */}
-      <Footer 
-        lang={lang} 
-      />
-
+      <Footer lang={lang} handleScrollTo={handleScrollTo} />
     </div>
   );
 }

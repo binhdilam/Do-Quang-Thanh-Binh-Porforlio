@@ -1,143 +1,108 @@
-import { useState } from "react";
-import { Cpu, Code, MessageCircleCode, Play, Share2, ExternalLink, Activity, Network, ZoomIn, X } from "lucide-react";
-import automationImg from "../assets/images/z7311460893031_0b4a561d4b596c27dde94fb13e549a2e.jpg";
+import { translations } from "../translations";
+import { Aperture, Waveform, Bolt, Spark } from "./ui/Icons";
 
 interface ToolsProps {
   lang: "en" | "vi";
 }
 
+const STACK = [
+  {
+    key: "traffic" as const,
+    icon: Aperture,
+    items: [
+      "TikTok Ads Manager",
+      "Meta Ads Manager",
+      "Google Ads",
+      "Apple Search Ads",
+      "Zalo Ads",
+      "TikTok Seller Center",
+    ],
+  },
+  {
+    key: "tracking" as const,
+    icon: Waveform,
+    items: [
+      "Google Analytics 4",
+      "Google Tag Manager",
+      "Looker Studio",
+      "Conversions API",
+      "Kalodata",
+      "Metric",
+    ],
+  },
+  {
+    key: "automation" as const,
+    icon: Bolt,
+    items: [
+      "n8n",
+      "Make.com",
+      "Google Apps Script",
+      "Google Sheets API",
+      "Telegram Bot API",
+      "Webhooks",
+    ],
+  },
+  {
+    key: "creative" as const,
+    icon: Spark,
+    items: ["Canva", "CapCut", "Figma", "Adobe Suite", "SEO copywriting"],
+  },
+];
+
 export default function Tools({ lang }: ToolsProps) {
-  const [isZoomed, setIsZoomed] = useState(false);
-
-  const t = {
-    en: {
-      title: "Automation Services & Marketing Stack",
-      subtitle: "Unified pipelines and technical system integrations deployed to connect platforms, validate quality, and automate operational workflows.",
-      toolsHeader: "Automation Tools",
-      demoLabel: "Automation Workflow Demo",
-      demoText: "This placeholder will later be replaced by a real workflow screenshot.",
-      ctaLabel: "Explore My Tool"
-    },
-    vi: {
-      title: "Automation Services & Marketing Stack",
-      subtitle: "Tổ hợp ứng dụng công nghệ và hệ thống kỹ thuật nhằm kết nối các kênh, kiểm soát chất lượng dữ liệu và tự động hoá quy trình vận hành.",
-      toolsHeader: "Automation Tools",
-      demoLabel: "Automation Workflow Demo",
-      demoText: "Vùng trống này được dành riêng để đính kèm tệp ảnh chụp mô hình thiết lập luồng tự động hóa tương lai.",
-      ctaLabel: "Explore My Tool"
-    }
-  }[lang];
-
-  const automationTools = [
-    { name: "n8n", icon: <Network className="w-5 h-5 text-emerald-500" /> },
-    { name: "Make.com", icon: <Share2 className="w-5 h-5 text-indigo-500" /> },
-    { name: "Google Apps Script", icon: <Code className="w-5 h-5 text-amber-500" /> },
-    { name: "Telegram Bot Alerts", icon: <MessageCircleCode className="w-5 h-5 text-sky-500" /> },
-    { name: "Vibe Coding", icon: <Play className="w-5 h-5 text-rose-500" fill="currentColor" fillOpacity="0.1" /> }
-  ];
+  const t = translations[lang];
 
   return (
-    <section id="tools" className="py-20 sm:py-24 bg-slate-50 border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="font-sans text-sm font-semibold text-indigo-600 tracking-wide uppercase block mb-3">
-            {lang === "en" ? "AUTOMATED WORKFLOW PIPELINES" : "TỰ ĐỘNG HÓA VẬN HÀNH"}
+    <section
+      id="tools"
+      className="relative px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40"
+    >
+      <div className="mx-auto max-w-[88rem]">
+        <div className="reveal max-w-3xl">
+          <span className="inline-block rounded-full border border-line bg-paper px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand">
+            {lang === "en" ? "Stack" : "Công nghệ"}
           </span>
-          <h2 className="font-sans font-bold text-slate-900 tracking-tight text-3xl sm:text-4xl mb-4">
-            {t.title}
+          <h2 className="display mt-6 text-4xl sm:text-5xl lg:text-[3.75rem] text-ink">
+            {t.tools.title}
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg leading-relaxed font-sans">
-            {t.subtitle}
+          <p className="prose-measure mt-6 text-base sm:text-lg leading-relaxed text-ink-2">
+            {t.tools.subtitle}
           </p>
         </div>
 
-        {/* TOP: Automation Tools list */}
-        <div className="mb-14">
-          <h3 className="font-sans font-bold text-slate-900 text-sm uppercase tracking-wider mb-6 text-center">
-            {t.toolsHeader}
-          </h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {automationTools.map((tool, idx) => (
-              <div 
-                key={idx}
-                className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-600/30 transition-all shadow-sm font-sans"
+        <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:mt-24 lg:grid-cols-4">
+          {STACK.map((group, i) => {
+            const Icon = group.icon;
+            return (
+              <div
+                key={group.key}
+                className="reveal"
+                style={{ transitionDelay: `${i * 80}ms` }}
               >
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex-shrink-0">
-                  {tool.icon}
-                </div>
-                <span className="font-sans font-semibold text-sm text-slate-900 tracking-tight">
-                  {tool.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* BOTTOM: Large Placeholder Image Area & CTA Link */}
-        <div className="bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-sm overflow-hidden relative">
-          
-          <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-            
-            {/* Automation Workflow Image Container */}
-            <div className="w-full">
-              <h4 className="font-sans font-bold text-slate-900 text-lg sm:text-xl tracking-tight mb-6 flex items-center justify-center gap-2">
-                <Cpu className="w-6 h-6 text-indigo-600" />
-                {t.demoLabel}
-              </h4>
-              <div 
-                className="rounded-xl overflow-hidden border border-slate-200 shadow-sm relative w-full cursor-zoom-in bg-slate-50"
-                onClick={() => setIsZoomed(true)}
-              >
-                <img 
-                  src={automationImg} 
-                  alt="Automation Workflow"
-                  className="w-full h-auto max-h-[70vh] object-contain hover:scale-[1.01] transition-transform duration-500 relative z-10"
-                  referrerPolicy="no-referrer"
-                />
-                
-                {/* Blinking indicator */}
-                <div className="absolute top-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2 border border-slate-200 animate-pulse pointer-events-none shadow-sm">
-                  <ZoomIn className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-sans font-bold text-slate-900 tracking-wider uppercase">
-                    {lang === "en" ? "Click to Zoom" : "Click để Phóng to"}
+                <div className="flex items-center gap-3 border-b border-line pb-4">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-paper-2 text-brand">
+                    <Icon className="h-4 w-4" />
                   </span>
+                  <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-2">
+                    {t.tools.cats[group.key]}
+                  </h3>
                 </div>
+
+                <ul className="mt-5 space-y-3">
+                  {group.items.map((item) => (
+                    <li
+                      key={item}
+                      className="text-sm leading-relaxed text-ink-2 transition-colors duration-500 hover:text-ink"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-
-          </div>
+            );
+          })}
         </div>
-
       </div>
-
-      {/* Zoom Modal */}
-      {isZoomed && (
-        <div 
-          className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 cursor-zoom-out"
-          onClick={() => setIsZoomed(false)}
-        >
-          <button 
-            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors border border-white/20 z-50 flex items-center justify-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsZoomed(false);
-            }}
-          >
-            <X className="w-6 h-6" />
-          </button>
-          
-          <img 
-            src={automationImg} 
-            alt="Automation Workflow Zoomed"
-            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl border border-slate-700 cursor-default bg-white"
-            onClick={(e) => e.stopPropagation()}
-            referrerPolicy="no-referrer"
-          />
-        </div>
-      )}
     </section>
   );
 }

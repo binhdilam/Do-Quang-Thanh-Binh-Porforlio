@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Zap, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowUpRight } from "./ui/Icons";
 
 interface HeaderProps {
   lang: "en" | "vi";
@@ -8,141 +8,203 @@ interface HeaderProps {
   handleScrollTo: (id: string) => void;
 }
 
-export default function Header({ lang, setLang, activeSection, handleScrollTo }: HeaderProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const NAV = [
+  { id: "about", label: { en: "About", vi: "Giới thiệu" } },
+  { id: "showcase", label: { en: "Results", vi: "Kết quả" } },
+  { id: "platforms", label: { en: "Channels", vi: "Kênh" } },
+  { id: "scope", label: { en: "Process", vi: "Quy trình" } },
+  { id: "tools-free", label: { en: "Free tool", vi: "Công cụ" } },
+];
 
-  const headerLinks = [
-    { id: "about", label: "About" },
-    { id: "metrics", label: "Highlights" },
-    { id: "cases", label: "Case Studies" },
-    { id: "platforms", label: "Strategies" },
-    { id: "scope", label: "Workflows" },
-    { id: "tools", label: "Tech Stack" },
-    { id: "contact", label: "Contact" }
-  ];
+export default function Header({
+  lang,
+  setLang,
+  activeSection,
+  handleScrollTo,
+}: HeaderProps) {
+  const [open, setOpen] = useState(false);
 
   const t = {
-    en: {
-      consultation: "Consultation",
-    },
-    vi: {
-      consultation: "Tư Vấn",
-    }
+    en: { consult: "Work with me", menu: "Menu", close: "Close menu" },
+    vi: { consult: "Liên hệ hợp tác", menu: "Menu", close: "Đóng menu" },
   }[lang];
 
-  const handleMobileNavClick = (id: string) => {
+  // Lock scroll while the overlay is open, close on Esc
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const go = (id: string) => {
+    setOpen(false);
     handleScrollTo(id);
-    setMobileMenuOpen(false);
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between flex-nowrap gap-4">
-        
-        {/* Logo and Branding Element */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-sans font-bold text-lg shadow-sm flex-shrink-0">
-            H
-          </div>
-          <div className="hidden sm:block min-w-0">
-            <span className="font-sans font-bold text-slate-900 text-[15px] block leading-none">
-              Howard Portfolio
-            </span>
-            <span className="font-sans text-[11px] text-slate-500 font-medium mt-1 block">
-              Media & Flows
-            </span>
+    <>
+      {/* ---- Floating island nav — detached from the top edge ---- */}
+      <header className="sticky top-0 z-50 px-4 pt-4 sm:pt-6">
+        <div className="mx-auto w-full max-w-[88rem]">
+          <div className="mx-auto flex w-full items-center justify-between gap-3 rounded-full border border-line/80 bg-paper/75 py-2 pl-3 pr-2 backdrop-blur-xl lift sm:w-max sm:gap-6 sm:pl-5">
+            {/* Monogram */}
+            <button
+              onClick={() => go("about")}
+              className="flex shrink-0 items-center gap-2.5"
+              aria-label="Howard Do — back to top"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand font-display text-base font-bold text-paper">
+                H
+              </span>
+              <span className="hidden text-sm font-semibold tracking-tight text-ink md:block">
+                Howard Do
+              </span>
+            </button>
+
+            {/* Desktop links */}
+            <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+              {NAV.map((link) => {
+                const isActive = activeSection === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => go(link.id)}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isActive ? "text-ink" : "text-ink-3 hover:text-ink"
+                    }`}
+                  >
+                    {link.label[lang]}
+                    <span
+                      aria-hidden
+                      className={`absolute inset-x-3.5 -bottom-0.5 h-px origin-left bg-brand transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                        isActive ? "scale-x-100" : "scale-x-0"
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div className="flex shrink-0 items-center gap-2">
+              {/* Language */}
+              <div className="flex items-center rounded-full border border-line bg-paper-2 p-0.5">
+                {(["en", "vi"] as const).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    aria-pressed={lang === l}
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      lang === l ? "bg-ink text-paper" : "text-ink-3 hover:text-ink"
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+
+              {/* Nested CTA */}
+              <button
+                onClick={() => go("contact")}
+                className="group hidden items-center gap-2 rounded-full bg-ink py-1.5 pl-4 pr-1.5 text-sm font-semibold text-paper transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-brand-deep active:scale-[0.98] sm:flex"
+              >
+                {t.consult}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-paper/12 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px group-hover:scale-105">
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
+              </button>
+
+              {/* Morphing hamburger */}
+              <button
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+                aria-label={open ? t.close : t.menu}
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper transition-colors duration-500 hover:border-ink-4 lg:hidden"
+              >
+                <span
+                  aria-hidden
+                  className={`absolute h-px w-4 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                    open ? "rotate-45" : "-translate-y-1"
+                  }`}
+                />
+                <span
+                  aria-hidden
+                  className={`absolute h-px w-4 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                    open ? "-rotate-45" : "translate-y-1"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Desktop Single-Row Navigation Menu */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-shrink-0">
-          {headerLinks.map((link) => (
-            <button
-               key={link.id}
-               onClick={() => handleScrollTo(link.id)}
-               className={`font-sans text-sm font-semibold transition-colors cursor-pointer ${
-                activeSection === link.id 
-                  ? "text-indigo-600" 
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              {link.label}
-            </button>
+      {/* ---- Full-screen overlay menu with staggered reveal ---- */}
+      <div
+        className={`fixed inset-0 z-40 lg:hidden ${
+          open ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        aria-hidden={!open}
+      >
+        <div
+          onClick={() => setOpen(false)}
+          className={`absolute inset-0 bg-paper/85 backdrop-blur-2xl transition-opacity duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            open ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        <nav
+          aria-label="Mobile"
+          className="relative flex h-full flex-col justify-center px-8 pb-16 pt-24"
+        >
+          {NAV.map((link, i) => (
+            <div key={link.id} className="overflow-hidden">
+              <button
+                onClick={() => go(link.id)}
+                tabIndex={open ? 0 : -1}
+                className={`block w-full py-3 text-left transition-all ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+                }`}
+                style={{
+                  transitionDuration: "700ms",
+                  transitionDelay: open ? `${100 + i * 60}ms` : "0ms",
+                }}
+              >
+                <span className="display text-4xl text-ink sm:text-5xl">
+                  {link.label[lang]}
+                </span>
+              </button>
+            </div>
           ))}
+
+          <div
+            className={`mt-10 transition-all ease-[cubic-bezier(0.32,0.72,0,1)] ${
+              open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+            }`}
+            style={{
+              transitionDuration: "700ms",
+              transitionDelay: open ? `${100 + NAV.length * 60}ms` : "0ms",
+            }}
+          >
+            <button
+              onClick={() => go("contact")}
+              tabIndex={open ? 0 : -1}
+              className="group inline-flex items-center gap-3 rounded-full bg-ink py-2 pl-6 pr-2 text-sm font-semibold text-paper transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
+            >
+              {t.consult}
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper/12 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+                <ArrowUpRight className="h-4 w-4" />
+              </span>
+            </button>
+          </div>
         </nav>
-
-        {/* Quick Language Toggle, Consultation Call, and Mobile Burger Menu Icon */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          
-          {/* Language Toggle Switch */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-lg">
-            <button 
-              onClick={() => setLang("en")}
-              className={`px-2.5 py-1 rounded-md font-sans text-xs font-semibold transition-all cursor-pointer ${
-                lang === "en" 
-                  ? "bg-white text-slate-900 shadow-sm" 
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              EN
-            </button>
-            <button 
-              onClick={() => setLang("vi")}
-              className={`px-2.5 py-1 rounded-md font-sans text-xs font-semibold transition-all cursor-pointer ${
-                lang === "vi" 
-                  ? "bg-white text-slate-900 shadow-sm" 
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              VI
-            </button>
-          </div>
-
-          {/* Quick Contact Button */}
-          <button
-            onClick={() => handleScrollTo("contact")}
-            className="hidden sm:flex bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg items-center gap-2 transition-colors shadow-sm cursor-pointer"
-          >
-            <Zap className="w-4 h-4" />
-            <span>{t.consultation}</span>
-          </button>
-
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 lg:hidden transition-colors cursor-pointer"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
       </div>
-
-      {/* Expanded Mobile Navigation Drawer/Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-200 shadow-md absolute left-0 right-0 py-4 px-6 flex flex-col gap-2 font-sans">
-          {headerLinks.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => handleMobileNavClick(link.id)}
-              className={`w-full text-left py-2.5 px-4 rounded-lg text-sm font-semibold transition-colors ${
-                activeSection === link.id
-                  ? "bg-indigo-50 text-indigo-600"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-              }`}
-            >
-              {link.label}
-            </button>
-          ))}
-          <button
-            onClick={() => handleMobileNavClick("contact")}
-            className="w-full text-left py-2.5 px-4 rounded-lg text-sm font-semibold bg-indigo-600 text-white mt-2 flex items-center gap-2"
-          >
-            <Zap className="w-4 h-4" />
-            {t.consultation}
-          </button>
-        </div>
-      )}
-    </header>
+    </>
   );
 }

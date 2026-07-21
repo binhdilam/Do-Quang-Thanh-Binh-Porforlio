@@ -1,113 +1,100 @@
-import { Share2, Smartphone, Search, MessageSquare, Layers, TrendingUp, Target, Award, Megaphone } from "lucide-react";
+import { translations } from "../translations";
+import { Spark, Aperture, Waveform, Globe, Stack, Fingerprint } from "./ui/Icons";
 
 interface PlatformsProps {
   lang: "en" | "vi";
 }
 
+const PLATFORM_KEYS = ["pTikTok", "pMeta", "pGoogle", "pApple", "pZalo"] as const;
+const OBJECTIVE_KEYS = ["cEcom", "cUA", "cLead", "cAware"] as const;
+
+const objectiveIcons = [Stack, Aperture, Fingerprint, Globe];
+
 export default function Platforms({ lang }: PlatformsProps) {
-  const t = {
-    en: {
-      title: "Platforms & Campaign Experience",
-      leftHeader: "Advertising Platforms",
-      rightHeader: "Campaign Experience",
-      platforms: [
-        { name: "Meta Ads", icon: <Share2 className="w-5 h-5 text-blue-600" /> },
-        { name: "TikTok Ads", icon: <Smartphone className="w-5 h-5 text-slate-900" /> },
-        { name: "Google Ads", icon: <Search className="w-5 h-5 text-red-500" /> },
-        { name: "Zalo Ads", icon: <MessageSquare className="w-5 h-5 text-sky-500" /> },
-        { name: "Apple Search Ads", icon: <Layers className="w-5 h-5 text-indigo-500" /> }
-      ],
-      campaigns: [
-        { name: "Product Sales", icon: <TrendingUp className="w-5 h-5 text-emerald-600" /> },
-        { name: "User Acquisition", icon: <Target className="w-5 h-5 text-indigo-600" /> },
-        { name: "Lead Generation", icon: <Award className="w-5 h-5 text-amber-500" /> },
-        { name: "Awareness", icon: <Megaphone className="w-5 h-5 text-purple-500" /> }
-      ]
-    },
-    vi: {
-      title: "Nền tảng & Chiến dịch",
-      leftHeader: "Nền tảng quảng cáo (Platforms)",
-      rightHeader: "Dạng chiến dịch (Campaigns)",
-      platforms: [
-        { name: "Meta Ads", icon: <Share2 className="w-5 h-5 text-blue-600" /> },
-        { name: "TikTok Ads", icon: <Smartphone className="w-5 h-5 text-slate-900" /> },
-        { name: "Google Ads", icon: <Search className="w-5 h-5 text-red-500" /> },
-        { name: "Zalo Ads", icon: <MessageSquare className="w-5 h-5 text-sky-500" /> },
-        { name: "Apple Search Ads", icon: <Layers className="w-5 h-5 text-indigo-500" /> }
-      ],
-      campaigns: [
-        { name: "Product Sales (Cải thiện Doanh số)", icon: <TrendingUp className="w-5 h-5 text-emerald-600" /> },
-        { name: "User Acquisition (Tải App & User mới)", icon: <Target className="w-5 h-5 text-indigo-600" /> },
-        { name: "Lead Generation (Thu thập Lead tư vấn)", icon: <Award className="w-5 h-5 text-amber-500" /> },
-        { name: "Awareness (Nhận diện Thương hiệu)", icon: <Megaphone className="w-5 h-5 text-purple-500" /> }
-      ]
-    }
-  }[lang];
+  const t = translations[lang];
 
   return (
-    <section id="platforms" className="py-20 sm:py-26 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="font-sans text-sm font-semibold text-indigo-600 tracking-wide uppercase block mb-3">
-          {lang === "en" ? "CHANNELS & CAMPAIGNS" : "PHÂN KÊNH & HÌNH THỨC VẬN HÀNH"}
-        </span>
-        <h2 className="font-sans font-bold text-slate-900 tracking-tight text-3xl sm:text-4xl mb-4">
-          {t.title}
-        </h2>
-      </div>
+    <section
+      id="platforms"
+      className="relative px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40"
+    >
+      <div className="mx-auto max-w-[88rem]">
+        <div className="reveal max-w-3xl">
+          <span className="inline-block rounded-full border border-brand/20 bg-brand-wash px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-deep">
+            {lang === "en" ? "Channels" : "Kênh"}
+          </span>
+          <h2 className="display mt-6 text-4xl sm:text-5xl lg:text-[3.75rem] text-ink">
+            {t.platforms.title}
+          </h2>
+          <p className="prose-measure mt-6 text-base sm:text-lg leading-relaxed text-ink-2">
+            {t.platforms.subtitle}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-        
-        {/* Left Column: Advertising Platforms */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-sm">
+        {/* Two balanced columns — equal width, equal card treatment */}
+        <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-14 lg:mt-24 lg:grid-cols-2">
+          {/* ---- Where budget goes: platform list only, no captions ---- */}
           <div>
-            <h3 className="font-sans font-bold text-[#0f172a] text-lg border-l-4 border-indigo-600 pl-4 mb-8 uppercase tracking-wide">
-              {t.leftHeader}
+            <h3 className="flex items-baseline gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-3">
+              <Waveform className="h-4 w-4 text-brand" />
+              {t.platforms.secLeft}
             </h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {t.platforms.map((platform, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex items-center gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-600/30 transition-all font-sans"
-                >
-                  <div className="p-2 bg-white rounded-lg shadow-sm flex-shrink-0">
-                    {platform.icon}
+
+            <ul className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {PLATFORM_KEYS.map((key, i) => {
+                const p = t.platforms[key];
+                return (
+                  <li
+                    key={key}
+                    className="reveal"
+                    style={{ transitionDelay: `${i * 60}ms` }}
+                  >
+                    <div className="group flex h-full items-center gap-4 rounded-2xl border border-line bg-paper px-5 py-5 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:border-brand-soft hover:bg-brand-wash">
+                      <span className="tnum shrink-0 text-[11px] text-ink-4">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <h4 className="text-[15px] font-semibold tracking-tight text-ink transition-colors duration-500 group-hover:text-brand-deep">
+                        {p.title}
+                      </h4>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* ---- Strategic campaign structures: matching card treatment ---- */}
+          <div>
+            <h3 className="flex items-baseline gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-3">
+              <Spark className="h-4 w-4 text-amber-deep" />
+              {t.platforms.secRight}
+            </h3>
+
+            <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {OBJECTIVE_KEYS.map((key, i) => {
+                const c = t.platforms[key];
+                const Icon = objectiveIcons[i];
+                return (
+                  <div
+                    key={key}
+                    className="reveal group rounded-2xl border border-line bg-paper p-5 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:border-amber-soft hover:bg-amber-wash"
+                    style={{ transitionDelay: `${i * 70}ms` }}
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-wash text-amber-deep transition-colors duration-500 group-hover:bg-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <h4 className="mt-4 text-[15px] font-semibold leading-snug tracking-tight text-ink">
+                      {c.title}
+                    </h4>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-3">
+                      {c.desc}
+                    </p>
                   </div>
-                  <span className="font-sans font-semibold text-sm text-slate-900 tracking-tight">
-                    {platform.name}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
-
-        {/* Right Column: Campaign Types */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-sm">
-          <div>
-            <h3 className="font-sans font-bold text-[#0f172a] text-lg border-l-4 border-emerald-500 pl-4 mb-8 uppercase tracking-wide">
-              {t.rightHeader}
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {t.campaigns.map((camp, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex items-center gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-500/30 transition-all font-sans"
-                >
-                  <div className="p-2 bg-white rounded-lg shadow-sm flex-shrink-0">
-                    {camp.icon}
-                  </div>
-                  <span className="font-sans font-semibold text-sm text-slate-900 tracking-tight">
-                    {camp.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
   );

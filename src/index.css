@@ -1,68 +1,236 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
+/* ============================================================
+   BRAND SYSTEM
+   White canvas · pine green (taken from the portrait) · warm amber.
+   Two accents only. Green carries identity, amber carries energy.
+   ============================================================ */
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Inter", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, monospace;
-  
-  --color-primary: #4F46E5;
-  --color-primary-hover: #4338CA;
-  --color-dark: #0F172A;
-  --color-border: #E2E8F0;
-  --color-background: #FFFFFF;
-  --color-section: #F8FAFC;
-  --color-success: #10B981;
+  /* Type */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Surfaces — white canvas, tints kept in one cool-green hue */
+  --color-paper: #FFFFFF;
+  --color-paper-2: #F5F9F7;
+  --color-paper-3: #E9F1ED;
+  --color-line: #DCE7E2;
+  --color-line-soft: #EDF3F0;
+
+  /* Ink — near-black with a green undertone, never pure #000 */
+  --color-ink: #0F1F19;
+  --color-ink-2: #3B4E46;
+  --color-ink-3: #64756D;
+  --color-ink-4: #94A39C;
+
+  /* Primary accent — pine green, lifted from the shirt in the portrait */
+  --color-brand: #1E5245;
+  --color-brand-deep: #123A30;
+  --color-brand-soft: #3F8570;
+  --color-brand-mint: #7FB8A2;
+  --color-brand-wash: #E6F2ED;
+
+  /* Secondary accent — warm amber, used for figures and highlights */
+  --color-amber: #C4762F;
+  --color-amber-deep: #9C5A1E;
+  --color-amber-soft: #E0A567;
+  --color-amber-wash: #FDF2E6;
+
+  /* Semantic — availability, success */
+  --color-forest: #2F7D5F;
+  --color-forest-wash: #E6F4EC;
+
+  /* Motion */
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Custom Base Styles */
+/* ---------- Base ---------- */
+
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-padding-top: 7rem;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-background);
-  color: var(--color-dark);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
   overflow-x: hidden;
 }
 
-/* Glassmorphism overlays */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border);
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
 }
 
-.glass-panel-dark {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
+.display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  text-wrap: balance;
 }
 
-/* Custom Marquee Speed & Animation Logic */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+.prose-measure {
+  max-width: 65ch;
+  text-wrap: pretty;
 }
 
-@keyframes marquee-reverse {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0%); }
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-.animate-marquee {
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+/* ---------- Film grain — fixed, pointer-events-none ---------- */
+
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Scroll reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(2.5rem);
+  filter: blur(6px);
+  transition:
+    opacity 900ms var(--ease-fluid),
+    transform 900ms var(--ease-fluid),
+    filter 900ms var(--ease-fluid);
+  will-change: transform, opacity;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  html { scroll-behavior: auto; }
+  .marquee-track,
+  .marquee-track-reverse { animation: none; }
+}
+
+/* ---------- Double-bezel primitives ---------- */
+
+.bezel {
+  background: color-mix(in oklab, var(--color-paper-3) 60%, transparent);
+  border: 1px solid var(--color-line);
+  border-radius: 2rem;
+  padding: 0.5rem;
+}
+
+.bezel-core {
+  background: var(--color-paper);
+  border-radius: calc(2rem - 0.5rem);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(15, 31, 25, 0.04),
+    0 12px 32px -12px rgba(19, 58, 48, 0.16);
+}
+
+/* Green-tinted ambient shadow so depth matches the palette */
+.lift {
+  box-shadow:
+    0 1px 2px rgba(15, 31, 25, 0.05),
+    0 8px 24px -8px rgba(19, 58, 48, 0.14),
+    0 24px 56px -24px rgba(19, 58, 48, 0.2);
+}
+
+/* Category tinting for the proof gallery */
+.bezel--amber {
+  background: color-mix(in oklab, var(--color-amber-wash) 75%, transparent);
+  border-color: color-mix(in oklab, var(--color-amber-soft) 40%, transparent);
+}
+
+.bezel--brand {
+  background: color-mix(in oklab, var(--color-brand-wash) 75%, transparent);
+  border-color: color-mix(in oklab, var(--color-brand-soft) 32%, transparent);
+}
+
+/* ---------- Marquee ---------- */
+
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-x-reverse {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+.marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 40s linear infinite;
+  animation: marquee-x 52s linear infinite;
 }
 
-.animate-marquee-reverse {
+.marquee-track-reverse {
   display: flex;
   width: max-content;
-  animation: marquee-reverse 40s linear infinite;
+  animation: marquee-x-reverse 46s linear infinite;
 }
 
-.animate-marquee:hover, .animate-marquee-reverse:hover {
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-host:hover .marquee-track,
+.marquee-host:hover .marquee-track-reverse {
   animation-play-state: paused;
 }
+
+/* ---------- Skip link ---------- */
+
+.skip-link {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -200%);
+  z-index: 100;
+  transition: transform 240ms var(--ease-fluid);
+}
+
+.skip-link:focus-visible {
+  transform: translate(-50%, 0.75rem);
+}
+
+/* ---------- Scrollbar ---------- */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-paper-2); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+  border: 3px solid var(--color-paper-2);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-brand-soft); }

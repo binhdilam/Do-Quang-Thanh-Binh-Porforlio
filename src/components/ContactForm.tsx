@@ -1,344 +1,357 @@
-import { useState, FormEvent } from "react";
+import {
+  useState,
+  type ReactNode,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { translations } from "../translations";
-import { MessageSquare, Phone, Mail, MapPin, Send, CheckCircle2, ShieldAlert } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { ArrowUpRight, Check, Phone, Mail, Pin, Clock } from "./ui/Icons";
 
 interface ContactFormProps {
   lang: "en" | "vi";
 }
 
+type Status = "idle" | "sending" | "sent" | "error";
+type Errors = Partial<Record<"name" | "email" | "message", string>>;
+
+const validation = {
+  en: {
+    nameRequired: "Please enter your name or company.",
+    emailRequired: "Please enter an email address.",
+    emailInvalid: "That email address doesn't look right.",
+    messageShort: "A sentence or two about your product helps me reply usefully.",
+    failed: "The message couldn't be sent. Please email me directly at thanhbinh72.work@gmail.com.",
+  },
+  vi: {
+    nameRequired: "Vui lòng nhập tên bạn hoặc tên công ty.",
+    emailRequired: "Vui lòng nhập địa chỉ email.",
+    emailInvalid: "Địa chỉ email này có vẻ chưa đúng.",
+    messageShort: "Một hai câu về sản phẩm sẽ giúp tôi phản hồi hữu ích hơn.",
+    failed: "Không gửi được tin nhắn. Bạn gửi email trực tiếp tới thanhbinh72.work@gmail.com giúp tôi nhé.",
+  },
+};
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export default function ContactForm({ lang }: ContactFormProps) {
   const t = translations[lang];
+  const v = validation[lang];
 
-  // Lead form state
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
+  const [status, setStatus] = useState<Status>("idle");
+  const [errors, setErrors] = useState<Errors>({});
+  const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     website: "",
-    message: ""
+    message: "",
   });
-  
-  // Non-disclosure agreement checkbox
-  const [requestNda, setRequestNda] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Form submission handler
-  const handleSubmitForm = async (e: FormEvent) => {
+  const set = (k: keyof typeof form) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [k]: undefined }));
+  };
+
+  const validate = (): boolean => {
+    const next: Errors = {};
+    if (!form.name.trim()) next.name = v.nameRequired;
+    if (!form.email.trim()) next.email = v.emailRequired;
+    else if (!EMAIL_RE.test(form.email.trim())) next.email = v.emailInvalid;
+    if (form.message.trim().length > 0 && form.message.trim().length < 12)
+      next.message = v.messageShort;
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) return;
+    if (!validate()) return;
 
-    setIsSubmitting(true);
-    setSubmitError(null);
-
+    setStatus("sending");
     try {
-      const res = await fetch('/api/notify-lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, requestNda }),
+      const res = await fetch("/api/notify-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Gửi thất bại, vui lòng thử lại.');
-      }
-
-      setFormSubmitted(true);
-      setTimeout(() => {
-        setFormSubmitted(false);
-        setFormData({ name: "", email: "", phone: "", website: "", message: "" });
-        setRequestNda(false);
-      }, 8000);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Có lỗi xảy ra, vui lòng thử lại.');
-    } finally {
-      setIsSubmitting(false);
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus("sent");
+    } catch {
+      setStatus("error");
     }
   };
 
   return (
-    <section id="contact" className="py-20 sm:py-26 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
-        
-        {/* Left direct channel contact options */}
-        <div className="lg:col-span-5 flex flex-col justify-between">
-          <div>
-            <span className="font-sans text-sm font-semibold text-indigo-600 tracking-wide uppercase block mb-3">
-              {lang === "en" ? "LEAD INTAKE GATEWAY" : "KÊNH LIÊN HỆ ĐỒNG BỘ"}
-            </span>
-            <h2 className="font-sans font-bold text-slate-900 tracking-tight text-3xl sm:text-4.5xl mb-4 leading-tight">
-              {t.contact.title}
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8 font-sans">
-              {t.contact.subtitle}
-            </p>
+    <section
+      id="contact"
+      className="relative px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[30rem]"
+        style={{
+          background:
+            "radial-gradient(55% 60% at 50% 100%, var(--color-brand-wash) 0%, transparent 70%)",
+        }}
+      />
 
-            <h3 className="font-sans font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider mb-5">
-              {t.contact.directTitle}
-            </h3>
+      <div className="relative mx-auto max-w-[88rem]">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+          {/* ---- Left: the ask ---- */}
+          <div className="lg:col-span-5">
+            <div className="reveal lg:sticky lg:top-28">
+              <span className="inline-block rounded-full border border-line bg-paper px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand">
+                {lang === "en" ? "Contact" : "Liên hệ"}
+              </span>
+              <h2 className="display mt-6 text-4xl leading-tight text-ink sm:text-5xl">
+                {t.contact.title}
+              </h2>
+              <p className="prose-measure mt-6 text-base leading-relaxed text-ink-2">
+                {t.contact.subtitle}
+              </p>
 
-            <div className="space-y-4">
-              
-              {/* Zalo Direct click */}
-              <a 
-                href="https://zalo.me/0788351752" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-slate-200 hover:border-indigo-600/30 transition-all group cursor-pointer shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <MessageSquare className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <span className="text-slate-500 font-sans text-xs font-semibold tracking-wider block uppercase mb-1">
-                    {t.contact.directZalo}
-                  </span>
-                  <span className="font-sans font-bold text-slate-900 text-sm sm:text-base leading-none">
-                    zalo.me/0788351752
-                  </span>
-                </div>
-              </a>
-
-              {/* Phone call hotline */}
-              <a 
-                href="tel:+84788351752"
-                className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-slate-200 hover:border-indigo-600/30 transition-all group cursor-pointer shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <Phone className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <span className="text-slate-500 font-sans text-xs font-semibold tracking-wider block uppercase mb-1">
-                    {t.contact.directTel}
-                  </span>
-                  <span className="font-sans font-bold text-slate-900 text-sm sm:text-base leading-none">
-                    +84 788 351 752
-                  </span>
-                </div>
-              </a>
-
-              {/* Email Channel link */}
-              <a 
-                href="mailto:thanhbinh72.work@gmail.com"
-                className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-slate-200 hover:border-indigo-600/30 transition-all group cursor-pointer shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <Mail className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <span className="text-slate-500 font-sans text-xs font-semibold tracking-wider block uppercase mb-1">
-                    {t.contact.directEmail}
-                  </span>
-                  <span className="font-sans font-bold text-slate-900 text-xs sm:text-sm break-all leading-none">
-                    thanhbinh72.work@gmail.com
-                  </span>
-                </div>
-              </a>
-
-              {/* geographical location */}
-              <div className="flex items-center gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div className="w-10 h-10 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-slate-500 font-sans text-xs font-semibold tracking-wider block uppercase mb-1">
-                    {t.contact.directLocation}
-                  </span>
-                  <span className="font-sans font-bold text-slate-800 text-xs sm:text-sm">
-                    Ho Chi Minh City, Vietnam
-                  </span>
-                </div>
-              </div>
-
+              <ul className="mt-10 space-y-5 border-t border-line pt-8">
+                <ContactRow
+                  icon={<Phone className="h-4 w-4" />}
+                  label={t.contact.directTel}
+                  value="+84 788 351 752"
+                  href="tel:+84788351752"
+                />
+                <ContactRow
+                  icon={<Mail className="h-4 w-4" />}
+                  label={t.contact.directEmail}
+                  value="thanhbinh72.work@gmail.com"
+                  href="mailto:thanhbinh72.work@gmail.com"
+                />
+                <ContactRow
+                  icon={<Pin className="h-4 w-4" />}
+                  label={t.contact.directLocation}
+                  value={
+                    lang === "en"
+                      ? "Ho Chi Minh City, Vietnam"
+                      : "TP. Hồ Chí Minh, Việt Nam"
+                  }
+                />
+                <ContactRow
+                  icon={<Clock className="h-4 w-4" />}
+                  label={lang === "en" ? "Response time" : "Thời gian phản hồi"}
+                  value={
+                    lang === "en" ? "Within 30 minutes" : "Trong vòng 30 phút"
+                  }
+                />
+              </ul>
             </div>
           </div>
 
-          {/* Quick trust metrics */}
-          <div className="mt-8 pt-6 border-t border-slate-200/60 hidden lg:block">
-            <span className="font-mono text-[10px] text-slate-400 uppercase tracking-widest block mb-2">
-              {lang === "en" ? "Airtight Non-disclosure Guarantee" : "BẢO MẬT THÔNG TIN TUYỆT ĐỐI"}
-            </span>
-            <p className="text-slate-500 text-xs leading-relaxed max-w-sm">
-              {lang === "en" ? "All product codes, pixel tags, and budget details are covered by standard NDA contracts prior to campaign scaling." : "Mọi thông số kỹ thuật, pixel và ngân sách phân bổ đều được bảo vệ và tối ưu đúng chuẩn hợp đồng NDA chặt chẽ trước khi dồn lực triển khai."}
-            </p>
-          </div>
-
-        </div>
-
-        {/* Right Direct Submission Lead Intake Form */}
-        <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 sm:p-9 shadow-sm">
-          
-          <AnimatePresence mode="wait">
-            {!formSubmitted ? (
-              <motion.form 
-                key="contact-form"
-                onSubmit={handleSubmitForm} 
-                className="space-y-5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                
-                {/* Name field */}
-                <div>
-                  <label className="block text-slate-705 text-xs font-semibold mb-2 lowercase tracking-wider uppercase">
-                    {t.contact.formName} *
-                  </label>
-                  <input 
-                    type="text"
-                    required
-                    placeholder="e.g. Unilever Beauty brand manager"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 font-sans text-sm focus:bg-white focus:outline-primary placeholder:text-slate-400"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  
-                  {/* Email field */}
-                  <div>
-                    <label className="block text-slate-705 text-xs font-semibold mb-2 lowercase tracking-wider uppercase">
-                      {t.contact.formEmail} *
-                    </label>
-                    <input 
-                      type="email"
-                      required
-                      placeholder="manager@brandname.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 font-sans text-sm focus:bg-white focus:outline-primary placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  {/* Phone field */}
-                  <div>
-                    <label className="block text-slate-705 text-xs font-semibold mb-2 lowercase tracking-wider uppercase">
-                      {t.contact.formPhone}
-                    </label>
-                    <input 
-                      type="tel"
-                      placeholder="0788351752"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 font-sans text-sm focus:bg-white focus:outline-primary placeholder:text-slate-400"
-                    />
-                  </div>
-
-                </div>
-
-                {/* Website link */}
-                <div>
-                  <label className="block text-slate-705 text-xs font-semibold mb-2 lowercase tracking-wider uppercase">
-                    {t.contact.formWebsite}
-                  </label>
-                  <input 
-                    type="url"
-                    placeholder="https://brandname.com"
-                    value={formData.website}
-                    onChange={(e) => setFormData({...formData, website: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 font-sans text-sm focus:bg-white focus:outline-primary placeholder:text-slate-400"
-                  />
-                </div>
-
-                {/* Message targeting */}
-                <div>
-                  <label className="block text-slate-705 text-xs font-semibold mb-2 lowercase tracking-wider uppercase">
-                    {t.contact.formMsg}
-                  </label>
-                  <textarea 
-                    rows={4}
-                    placeholder={lang === "en" ? "Looking to scale on TikTok shop with $15k spend/mo..." : "Cần phát triển phễu đồng bộ lead cho sản phẩm app với ngân sách..."}
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 font-sans text-sm focus:bg-white focus:outline-primary placeholder:text-slate-400 resize-none"
-                  />
-                </div>
-
-                {/* NDA Pre-check */}
-                <div className="flex items-center gap-2.5 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700">
-                  <input
-                    type="checkbox"
-                    id="nda"
-                    checked={requestNda}
-                    onChange={(e) => setRequestNda(e.target.checked)}
-                    className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-600 accent-indigo-600 cursor-pointer"
-                  />
-                  <label htmlFor="nda" className="font-sans text-xs font-semibold cursor-pointer select-none">
-                    {lang === "en" 
-                      ? "🔒 Request mutual NDA agreement document prior to sharing campaign metrics" 
-                      : "🔒 Đăng ký cấp quyền bảo mật thông số trung lập (NDA) trước khi trao đổi tệp"}
-                  </label>
-                </div>
-
-                {requestNda && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex gap-2 p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-600 text-[11px]"
-                  >
-                    <ShieldAlert className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
-                    <span>
-                      {lang === "en" 
-                        ? "An editable mutual NDA document from Howard's legal partners will be attached with your automatically dispatched campaign proposal."
-                        : "Văn bản mẫu bảo lãnh NDA từ đại lý pháp vụ của Howard sẽ tự động đính kèm cùng phản hồi đề xuất lên phễu sau 30 phút."}
+          {/* ---- Right: the form ---- */}
+          <div className="lg:col-span-6 lg:col-start-7">
+            <div className="reveal bezel" style={{ transitionDelay: "120ms" }}>
+              <div className="bezel-core p-6 sm:p-9 lg:p-10">
+                {status === "sent" ? (
+                  <div className="py-10 text-center">
+                    <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-forest-wash text-forest">
+                      <Check className="h-6 w-6" />
                     </span>
-                  </motion.div>
-                )}
-
-                {submitError && (
-                  <p className="text-red-500 text-xs text-center">{submitError}</p>
-                )}
-
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-sans font-bold tracking-wide uppercase py-4 px-6 rounded-xl text-sm cursor-pointer transition-all flex items-center justify-center gap-2.5 shadow-sm"
-                >
-                  <Send className="w-4 h-4 text-emerald-400" />
-                  <span>{isSubmitting ? (lang === "en" ? "Sending..." : "Đang gửi...") : t.contact.formBtn}</span>
-                </button>
-
-              </motion.form>
-            ) : (
-              <motion.div 
-                key="success-prompt"
-                className="text-center py-10 px-4 flex flex-col items-center justify-center"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-6 animate-bounce">
-                  <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
-                </div>
-                <h3 className="font-sans font-bold text-slate-900 text-xl sm:text-2xl mb-4 uppercase tracking-tight">
-                  {lang === "en" ? "Strategic Request Transmitted" : "Yêu Cầu Chiến Dịch Đã Đồng Bộ!"}
-                </h3>
-                <p className="text-slate-600 text-sm leading-relaxed max-w-md font-sans">
-                  {t.contact.successMsg}
-                </p>
-                
-                {/* n8n simulated indicator */}
-                <div className="mt-8 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-left w-full max-w-sm">
-                  <span className="font-mono text-[9px] text-slate-400 font-bold block uppercase mb-2 tracking-widest">
-                    n8n webhook pipeline response:
-                  </span>
-                  <div className="font-mono text-[11px] text-slate-600 space-y-1">
-                    <p>✓ Syncing lead with Howard's WhatsApp messenger...</p>
-                    <p className="text-emerald-600">✓ Status: ROUTER_200_SUCCESS_DISPATCHED</p>
-                    <p>{requestNda ? "✓ Mutual NDA standard contract draft pre-compiled" : "✓ Non-NDA baseline route active"}</p>
-                    <p>✓ Transmitted successfully to Howard inbox.</p>
+                    <h3 className="display mt-6 text-2xl text-ink sm:text-3xl">
+                      {lang === "en" ? "Message received" : "Đã nhận được tin nhắn"}
+                    </h3>
+                    <p className="prose-measure mx-auto mt-4 text-sm leading-relaxed text-ink-2">
+                      {t.contact.successMsg}
+                    </p>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                ) : (
+                  <form onSubmit={submit} noValidate>
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <Field
+                        id="name"
+                        label={t.contact.formName}
+                        value={form.name}
+                        onChange={set("name")}
+                        error={errors.name}
+                        required
+                        autoComplete="name"
+                      />
+                      <Field
+                        id="email"
+                        type="email"
+                        label={t.contact.formEmail}
+                        value={form.email}
+                        onChange={set("email")}
+                        error={errors.email}
+                        required
+                        autoComplete="email"
+                      />
+                      <Field
+                        id="phone"
+                        type="tel"
+                        label={t.contact.formPhone}
+                        value={form.phone}
+                        onChange={set("phone")}
+                        autoComplete="tel"
+                      />
+                      <Field
+                        id="website"
+                        type="url"
+                        label={t.contact.formWebsite}
+                        value={form.website}
+                        onChange={set("website")}
+                        autoComplete="url"
+                      />
+                    </div>
 
+                    <div className="mt-5">
+                      <Field
+                        id="message"
+                        label={t.contact.formMsg}
+                        value={form.message}
+                        onChange={set("message")}
+                        error={errors.message}
+                        textarea
+                      />
+                    </div>
+
+                    {status === "error" && (
+                      <p
+                        role="alert"
+                        className="mt-5 rounded-xl border border-brand/30 bg-brand-wash px-4 py-3 text-sm leading-relaxed text-brand-deep"
+                      >
+                        {v.failed}
+                      </p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={status === "sending"}
+                      className="group mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-2 pl-6 pr-2 text-sm font-semibold text-paper transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-brand-deep active:scale-[0.99] disabled:opacity-60 sm:w-auto"
+                    >
+                      {status === "sending"
+                        ? lang === "en"
+                          ? "Sending…"
+                          : "Đang gửi…"
+                        : t.contact.formBtn}
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper/12 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px group-hover:scale-105">
+                        <ArrowUpRight className="h-4 w-4" />
+                      </span>
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
     </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function Field({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  type = "text",
+  required,
+  textarea,
+  autoComplete,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  error?: string;
+  type?: string;
+  required?: boolean;
+  textarea?: boolean;
+  autoComplete?: string;
+}) {
+  const cls = `w-full rounded-xl border bg-paper-2 px-4 py-3 text-sm text-ink placeholder:text-ink-4 transition-colors duration-500 ${
+    error ? "border-brand" : "border-line focus:border-ink-4"
+  }`;
+
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.13em] text-ink-3"
+      >
+        {label}
+        {required && <span className="ml-1 text-brand">*</span>}
+      </label>
+
+      {textarea ? (
+        <textarea
+          id={id}
+          name={id}
+          rows={5}
+          value={value}
+          onChange={onChange}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={`${cls} resize-y`}
+        />
+      ) : (
+        <input
+          id={id}
+          name={id}
+          type={type}
+          value={value}
+          onChange={onChange}
+          required={required}
+          autoComplete={autoComplete}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={cls}
+        />
+      )}
+
+      {error && (
+        <p id={`${id}-error`} role="alert" className="mt-2 text-xs text-brand-deep">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ContactRow({
+  icon,
+  label,
+  value,
+  href,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  const inner = (
+    <>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-paper-2 text-ink-3 transition-colors duration-500 group-hover:border-brand/40 group-hover:bg-brand-wash group-hover:text-brand">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-4">
+          {label}
+        </span>
+        <span className="block truncate text-sm font-semibold text-ink">
+          {value}
+        </span>
+      </span>
+    </>
+  );
+
+  return (
+    <li>
+      {href ? (
+        <a href={href} className="group flex items-center gap-4">
+          {inner}
+        </a>
+      ) : (
+        <div className="group flex items-center gap-4">{inner}</div>
+      )}
+    </li>
   );
 }
