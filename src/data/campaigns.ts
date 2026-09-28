@@ -31,6 +31,8 @@ export interface ShowcaseItem {
   id: string;
   category: ShowcaseCategory;
   image: string;
+  /** Tailwind object-position utility for the cropped tile thumbnail (lightbox always shows the full image). Defaults to "object-top". */
+  imagePosition?: string;
   platform: string;
   period: string;
   title: { en: string; vi: string };
@@ -211,6 +213,7 @@ export const showcaseItems: ShowcaseItem[] = [
     id: "meta-landingpage-conversion",
     category: "ecommerce",
     image: ecomMetaLanding,
+    imagePosition: "object-right-top",
     platform: "Meta Ads — Landing page conversion",
     period: "14 – 16 Aug 2026",
     span: "normal",

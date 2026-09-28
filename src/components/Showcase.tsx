@@ -204,7 +204,7 @@ function ShowcaseTile({ item, lang, index, openLabel, onOpen }: TileProps) {
                 alt={item.alt[lang]}
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-cover object-top transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
+                className={`h-full w-full object-cover ${item.imagePosition ?? "object-top"} transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]`}
               />
             </div>
 
