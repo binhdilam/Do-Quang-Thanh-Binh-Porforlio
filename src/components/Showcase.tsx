@@ -15,7 +15,7 @@ const copy = {
   en: {
     eyebrow: "Proof of work",
     title: "Screenshots from the accounts, not a slide deck",
-    lede: "Ten dashboards pulled straight from TikTok Ads Manager, Meta Ads Manager, Google Ads, Apple Search Ads and Zalo Ads. Client names are withheld under NDA; the numbers are untouched.",
+    lede: "Eleven dashboards pulled straight from TikTok Ads Manager, Meta Ads Manager, Google Ads, Apple Search Ads and Zalo Ads. Client names are withheld under NDA; the numbers are untouched.",
     open: "View full dashboard",
     close: "Close",
     nda: "Account names blurred or omitted under NDA. Full walkthroughs available on request.",
@@ -24,7 +24,7 @@ const copy = {
   vi: {
     eyebrow: "Bằng chứng thực tế",
     title: "Ảnh chụp từ tài khoản thật, không phải slide",
-    lede: "Mười dashboard lấy trực tiếp từ TikTok Ads Manager, Meta Ads Manager, Google Ads, Apple Search Ads và Zalo Ads. Tên khách hàng được giữ kín theo NDA; số liệu giữ nguyên bản.",
+    lede: "Mười một dashboard lấy trực tiếp từ TikTok Ads Manager, Meta Ads Manager, Google Ads, Apple Search Ads và Zalo Ads. Tên khách hàng được giữ kín theo NDA; số liệu giữ nguyên bản.",
     open: "Xem dashboard đầy đủ",
     close: "Đóng",
     nda: "Tên tài khoản được làm mờ hoặc lược bỏ theo NDA. Có thể trình bày chi tiết khi được yêu cầu.",

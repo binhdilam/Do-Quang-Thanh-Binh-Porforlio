@@ -16,6 +16,7 @@ import uaMetaLeadGen from "../assets/showcase/ua-meta-lead-gen.png";
 import uaGoogleAppInstall from "../assets/showcase/ua-google-app-install.png";
 import uaApple from "../assets/showcase/ua-apple-search-ads.png";
 import uaZalo from "../assets/showcase/ua-zalo-ads.png";
+import ecomMetaLanding from "../assets/showcase/ecom-meta-landingpage-conversion.webp";
 
 export type ShowcaseCategory = "ecommerce" | "acquisition";
 
@@ -206,6 +207,36 @@ export const showcaseItems: ShowcaseItem[] = [
   },
 
   /* ---------------- APP INSTALL / LEAD GEN ---------------- */
+  {
+    id: "meta-landingpage-conversion",
+    category: "ecommerce",
+    image: ecomMetaLanding,
+    platform: "Meta Ads — Landing page conversion",
+    period: "14 – 16 Aug 2026",
+    span: "normal",
+    title: {
+      en: "E-commerce landing page test at 7.51x purchase ROAS",
+      vi: "Test landing page ecom, Purchase ROAS 7.51x",
+    },
+    note: {
+      en: "Short budget window on a single campaign to validate a new landing page before scaling. 247 link clicks converted into 29 website purchases at 9.40% CTR.",
+      vi: "Chạy thử ngân sách ngắn trên 1 campaign để kiểm chứng landing page mới trước khi scale. 247 lượt click ra 29 đơn mua hàng trên website, CTR 9.40%.",
+    },
+    alt: {
+      en: "Meta Ads Manager campaign report, 14–16 Aug 2026: 515,336 VND spent, 29 website purchases, 7.51 purchase ROAS, 9.40% CTR",
+      vi: "Báo cáo chiến dịch Meta Ads Manager 14–16/8/2026: chi 515.336đ, 29 đơn mua hàng trên website, ROAS 7.51, CTR 9.40%",
+    },
+    stats: [
+      { label: { en: "Purchase ROAS", vi: "Purchase ROAS" }, value: "7.51x", hero: true },
+      { label: { en: "Website purchases", vi: "Đơn mua hàng" }, value: "29" },
+      { label: { en: "Ad spend", vi: "Chi phí" }, value: "515,336₫" },
+      { label: { en: "Cost per purchase", vi: "Chi phí / đơn" }, value: "17,770₫" },
+      { label: { en: "CTR", vi: "CTR" }, value: "9.40%" },
+      { label: { en: "Link clicks", vi: "Lượt click liên kết" }, value: "247" },
+      { label: { en: "CPC", vi: "CPC" }, value: "1,416₫" },
+      { label: { en: "Reach", vi: "Tiếp cận" }, value: "2,822" },
+    ],
+  },
   {
     id: "meta-app-install",
     category: "acquisition",
