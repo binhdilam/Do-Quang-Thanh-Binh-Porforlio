@@ -3,11 +3,38 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/gmvmax-tool",
+      "destination": "/gmvmax-tool/index.html"
+    },
+    {
+      "source": "/gmvmax-tool/demo",
+      "destination": "/gmvmax-tool/demo/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "redirects": [
     {
       "source": "/tools/tiktok-gmv-max-report",
-      "destination": "/tools/tiktok-gmv-max-report/index.html"
+      "destination": "/tiktokgmvmaxreport.html",
+      "permanent": true
     },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/tools/tiktok-gmv-max-report/index.html",
+      "destination": "/tiktokgmvmaxreport.html",
+      "permanent": true
+    },
+    {
+      "source": "/tiktokgmvmaxreport",
+      "destination": "/tiktokgmvmaxreport.html",
+      "permanent": true
+    }
   ]
 }

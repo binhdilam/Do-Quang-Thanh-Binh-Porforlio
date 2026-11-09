@@ -13,7 +13,7 @@ const NAV = [
   { id: "showcase", label: { en: "Results", vi: "Kết quả" } },
   { id: "platforms", label: { en: "Channels", vi: "Kênh" } },
   { id: "scope", label: { en: "Process", vi: "Quy trình" } },
-  { id: "tools-free", label: { en: "Free tool", vi: "Công cụ" } },
+  { id: "tools-free", label: { en: "My tools", vi: "Công cụ" } },
 ];
 
 export default function Header({

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TikTok Performance Hub</title>
+<title>TikTok Performance Hub – US</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
@@ -11,10 +11,11 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
 :root { --sidebar-width: 240px; }
+:root.sb-collapsed { --sidebar-width: 64px; }
 html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9fa; color: #1b1b21; min-height:100vh; }
 #sidebar { width: var(--sidebar-width); transition: width 0.18s ease; }
 #main-content { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); transition: margin-left 0.18s ease, width 0.18s ease; }
-#sidebar.collapsed { width: 64px; }
+#sidebar.collapsed { width: var(--sidebar-width); }
 #sidebar.collapsed .nav-label,
 #sidebar.collapsed #sidebar-brand,
 #sidebar.collapsed #sidebar-footer-text { display:none; }
@@ -38,6 +39,44 @@ html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9fa; 
 .progress-bar { height:6px; background:#e2e2e3; border-radius:4px; overflow:hidden; display:inline-block; width:56px; vertical-align:middle; }
 .progress-bar-fill { height:100%; background:#185cff; border-radius:4px; }
 @keyframes spin{to{transform:rotate(360deg)}}
+/* ===== UI fixes: layout ===== */
+/* Sidebar header: tên brand không bị nút thu gọn đè */
+#sidebar-brand { min-width:0; }
+#sidebar-brand > div:first-child { font-size:15.5px !important; letter-spacing:-0.2px; overflow:hidden; text-overflow:ellipsis; }
+#sidebar-toggle-btn { width:28px; height:28px; }
+/* Thanh công cụ của bảng: mọi control cùng cao 32px, không co/đè lên nhau */
+[id$="-search"], #vid-pid-filter, [id$="-filter-btn"], .export-btn,
+button[onclick^="resetFilters"], button[onclick*="pid-name-file-input"] {
+  height:32px; flex:none; box-sizing:border-box; display:inline-flex; align-items:center; gap:4px;
+  font-size:12px !important; padding:0 12px !important; border-radius:7px !important; white-space:nowrap;
+}
+[id$="-search"] { padding:0 10px !important; }
+#vid-pid-filter { width:210px; padding:0 8px !important; text-overflow:ellipsis; }
+/* Bộ lọc ngày air (Creative) */
+.air-range { display:inline-flex; align-items:center; gap:4px; height:32px; flex:none; padding:0 4px 0 10px; border:1px solid #cbd8ef; border-radius:7px; background:white; font-size:12px; color:#627086; white-space:nowrap; }
+#vid-search { width:160px !important; }
+.air-range input[type=date] { height:28px; border:none; background:transparent; font-size:12px; color:#1b1b21; padding:0 2px; width:110px; font-family:inherit; }
+.air-range input[type=date]:focus { outline:2px solid #185cff; outline-offset:0; border-radius:4px; }
+[id$="-search"]:focus, #vid-pid-filter:focus { outline:2px solid #185cff33; border-color:#185cff !important; }
+/* Panel lọc: ô "+ Thêm trường lọc" vừa nội dung, không kéo dài cả hàng */
+.field-add-select { width:auto; min-width:220px; max-width:320px; }
+.filter-panel { margin-top:12px; margin-bottom:0; }
+/* Bảng rộng: cột đầu dính khi cuộn ngang */
+#ov-table th:first-child, #ov-table td:first-child,
+#koc-table th:first-child, #koc-table td:first-child,
+#pid-table th:first-child, #pid-table td:first-child,
+#vid-table th:first-child, #vid-table td:first-child { position:sticky; left:0; z-index:2; }
+#ov-table td:first-child, #koc-table td:first-child, #pid-table td:first-child, #vid-table td:first-child { background:white; }
+#ov-table th:first-child, #koc-table th:first-child, #pid-table th:first-child, #vid-table th:first-child { background:#f3f3f4; }
+#ov-table th:first-child::after, #ov-table td:first-child::after,
+#koc-table th:first-child::after, #koc-table td:first-child::after,
+#pid-table th:first-child::after, #pid-table td:first-child::after,
+#vid-table th:first-child::after, #vid-table td:first-child::after {
+  content:''; position:absolute; top:0; right:-1px; bottom:0; width:1px; background:#e2e2e3; }
+#ov-table tbody tr:hover td, #koc-table tbody tr:hover td, #pid-table tbody tr:hover td, #vid-table tbody tr:hover td { background:#f7f9ff; }
+/* Ô tên 1 dòng, dài thì "…" (rê chuột xem đủ) để các dòng đều nhau */
+.cell-1line { display:inline-block; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; vertical-align:middle; }
+
 
 /* Funnel visual */
 .funnel-wrap { display:flex; flex-direction:column; gap:6px; }
@@ -167,7 +206,7 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
       </div>
       <div style="font-size:17px;font-weight:700;color:#1b1b21;margin-bottom:8px;">Kéo thả file vào đây</div>
       <div style="color:#627086;margin-bottom:6px;font-size:13px;">Hỗ trợ nhiều file .xlsx cùng lúc — mỗi file tương ứng 1 tài khoản</div>
-      <div style="color:#8fb3ff;font-size:11px;font-weight:600;margin-bottom:18px;">Ưu tiên sheet <strong>Raw data Video</strong> hoặc <strong>Data</strong></div>
+      <div style="color:#8fb3ff;font-size:11px;font-weight:600;margin-bottom:18px;">File <strong>Creative data … Product …</strong> xuất từ TikTok Shop US (sheet đầu tiên)</div>
       <button style="background:#185cff;color:white;padding:9px 26px;border-radius:8px;font-weight:700;font-size:13px;border:none;cursor:pointer;">Chọn file(s)</button>
       <input id="file-input" type="file" accept=".xlsx,.xls,.csv" multiple style="display:none;" onchange="handleFileInput(event)"/>
     </div>
@@ -216,11 +255,11 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
         <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Campaign name / ID</strong><div style="color:#627086;font-size:11px;">Tên và ID chiến dịch</div></div>
-        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Product ID</strong><div style="color:#627086;font-size:11px;">ID sản phẩm (PID)</div></div>
-        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>TikTok account</strong><div style="color:#627086;font-size:11px;">Tên KOC / creator</div></div>
+        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>SPU ID · Product name</strong><div style="color:#627086;font-size:11px;">ID + tên sản phẩm (PID)</div></div>
+        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Post ID · TikTok account</strong><div style="color:#627086;font-size:11px;">ID video, tên KOC / creator</div></div>
         <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Cost · SKU orders · Gross revenue</strong><div style="color:#627086;font-size:11px;">Chi phí, đơn hàng, GMV</div></div>
         <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Product ad impressions · clicks</strong><div style="color:#627086;font-size:11px;">TOFU metrics</div></div>
-        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>2s / 6s / 25% / 50% / 75% / 100% view rate</strong><div style="color:#627086;font-size:11px;">Video view funnel</div></div>
+        <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>6s view rate</strong><div style="color:#627086;font-size:11px;">Video view funnel</div></div>
       </div>
       <div style="margin-top:10px;background:#dce8ff;padding:9px 12px;border-radius:7px;font-size:12px;color:#185cff;">
         <strong>Lưu ý:</strong> 6s Views = Impressions × 6s rate (tự tính). Product card được phân vào PID Report, không phải Creative Report.
@@ -246,7 +285,7 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
   <!-- KPI row 2: 6s CTR CVR -->
   <div id="ov-kpis-bot" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;"></div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-bottom:20px;">
     <!-- Funnel -->
     <div style="background:white;border:1px solid #cbd8ef;border-radius:12px;padding:22px;">
       <div style="font-weight:700;margin-bottom:14px;color:#1b1b21;font-size:14px;">Phễu chuyển đổi</div>
@@ -256,36 +295,40 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
     <div style="background:white;border:1px solid #cbd8ef;border-radius:12px;padding:22px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap;">
         <div style="font-weight:700;color:#1b1b21;font-size:14px;">So sánh chiến dịch</div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span id="chart-unit-badge" class="chart-unit-badge">Đơn vị: ₫</span>
-          <select id="chart-metric" onchange="renderOverviewChart()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:4px 8px;background:#f3f3f4;color:#185cff;font-weight:700;">
-            <option value="gmv">GMV</option>
-            <option value="cost">Chi phí</option>
-            <option value="orders">Đơn hàng</option>
-            <option value="roi">ROAS</option>
-            <option value="impressions">Impressions</option>
-            <option value="clicks">Clicks</option>
-            <option value="view6s_rate">6s Rate</option>
-            <option value="ctr">CTR</option>
-          </select>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#627086;font-weight:600;">
+            <span style="width:12px;height:12px;background:#185cff;border-radius:2px;display:inline-block;"></span>Cột
+            <select id="chart-metric" onchange="renderOverviewChart()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:4px 8px;background:#f3f3f4;color:#185cff;font-weight:700;"></select>
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#627086;font-weight:600;">
+            <span style="width:14px;height:3px;background:#f59e0b;border-radius:2px;display:inline-block;"></span>Line
+            <select id="chart-metric-line" onchange="renderOverviewChart()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:4px 8px;background:#fff7e6;color:#b45309;font-weight:700;"></select>
+          </label>
         </div>
       </div>
-      <div class="chart-area">
-        <div id="ov-chart-yaxis" class="chart-yaxis"></div>
-        <div style="flex:1;display:flex;flex-direction:column;">
-          <div id="ov-chart" class="bar-chart-wrap"></div>
-          <div id="ov-chart-labels" style="display:flex;gap:6px;margin-top:6px;padding-left:4px;"></div>
-        </div>
-      </div>
+      <div id="ov-chart-svg" style="width:100%;min-width:0;overflow:hidden;"></div>
     </div>
   </div>
 
   <!-- Campaign Table -->
   <div style="background:white;border:1px solid #cbd8ef;border-radius:12px;overflow:hidden;">
-    <div style="padding:14px 18px;border-bottom:1px solid #cbd8ef;font-weight:700;font-size:13px;">Chi tiết theo chiến dịch</div>
+    <div style="padding:14px 18px;border-bottom:1px solid #cbd8ef;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="font-weight:700;font-size:13px;">Chi tiết theo chiến dịch</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input id="ov-search" placeholder="Tìm chiến dịch..." oninput="applyOVFilters()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;width:180px;"/>
+          <button onclick="toggleFilter('ov-filter-panel')" id="ov-filter-btn" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:#f3f3f4;color:#185cff;font-weight:700;display:flex;align-items:center;gap:4px;">
+            <span class="material-symbols-outlined" style="font-size:14px;">filter_list</span>Lọc
+          </button>
+          <button onclick="resetFilters('ov')" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:white;color:#627086;">Reset</button>
+        </div>
+      </div>
+      <div id="ov-filter-panel" class="filter-panel" style="margin-top:12px;margin-bottom:0;"></div>
+    </div>
     <div style="overflow-x:auto;">
       <table id="ov-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
     </div>
+    <div id="ov-count" style="padding:10px 18px;font-size:11px;color:#627086;border-top:1px solid #f0f0f0;"></div>
   </div>
 </div>
 
@@ -337,7 +380,7 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
         <div style="font-weight:700;font-size:13px;">Chi tiết theo sản phẩm</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <input id="pid-search" placeholder="Tìm PID..." onkeyup="applyPIDFilters()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;width:160px;"/>
+          <input id="pid-search" placeholder="Tìm PID hoặc tên sản phẩm..." oninput="applyPIDFilters()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;width:210px;"/>
           <button onclick="toggleFilter('pid-filter-panel')" id="pid-filter-btn" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:#f3f3f4;color:#185cff;font-weight:700;display:flex;align-items:center;gap:4px;">
             <span class="material-symbols-outlined" style="font-size:14px;">filter_list</span>Lọc
           </button>
@@ -379,7 +422,14 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
         <div style="font-weight:700;font-size:13px;">Danh sách creative</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <input id="vid-search" placeholder="Tìm video / account / PID..." onkeyup="applyVidFilters()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;width:200px;"/>
+          <select id="vid-pid-filter" onchange="setVidPidFilter(this.value)" title="Lọc theo sản phẩm: chỉ số mỗi video chỉ tính phần chạy cho PID này" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 8px;max-width:260px;background:white;color:#1b1b21;"><option value="">Tất cả PID</option></select>
+          <div class="air-range" title="Lọc theo ngày air video (cột Time posted). Product card không có ngày air nên bị ẩn khi lọc.">
+            <span>Ngày air</span>
+            <input type="date" id="vid-air-from" onchange="vidPage=1;applyVidFilters()" aria-label="Ngày air từ"/>
+            <span>–</span>
+            <input type="date" id="vid-air-to" onchange="vidPage=1;applyVidFilters()" aria-label="Ngày air đến"/>
+          </div>
+          <input id="vid-search" placeholder="Tìm video / account / PID..." oninput="applyVidFilters()" style="font-size:12px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;width:200px;"/>
           <button onclick="toggleFilter('vid-filter-panel')" id="vid-filter-btn" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:#f3f3f4;color:#185cff;font-weight:700;display:flex;align-items:center;gap:4px;">
             <span class="material-symbols-outlined" style="font-size:14px;">filter_list</span>Lọc
           </button>
@@ -411,10 +461,13 @@ let sortState = {
   koc: {col:'gmv', dir:'desc'},
   pid: {col:'gmv', dir:'desc'},
   vid: {col:'gmv', dir:'desc'},
+  ov:  {col:'gmv', dir:'desc'},
 };
+let ovCampAllRows = []; // tổng hợp theo chiến dịch, dùng chung cho bảng + chart Overview
 let vidPage = 1;
 let vidPageSize = 50;
 let vidCreativeFilter = 'all'; // 'video' | 'product_card' | 'all'
+let vidPidFilter = ''; // '' = tất cả PID; có giá trị = chỉ tổng hợp các dòng raw của PID đó
 let kocCreativeFilter = 'video'; // 'video' | 'all'
 
 // Field definitions for dynamic filter panels (key, label, isPct, unit)
@@ -452,11 +505,6 @@ const FIELD_DEFS = {
     {key:'impressions', label:'Impressions'},
     {key:'six_s_views', label:'6s Views'},
     {key:'rate6s', label:'6s Rate', isPct:true},
-    {key:'rate2s', label:'2s Rate', isPct:true},
-    {key:'rate25', label:'25% View Rate', isPct:true},
-    {key:'rate50', label:'50% View Rate', isPct:true},
-    {key:'rate75', label:'75% View Rate', isPct:true},
-    {key:'rate100', label:'100% View Rate', isPct:true},
     {key:'clicks', label:'Clicks'},
     {key:'ctr', label:'CTR', isPct:true},
     {key:'cvr', label:'CVR', isPct:true},
@@ -466,9 +514,21 @@ const FIELD_DEFS = {
     {key:'cost', label:'Chi phí (₫)'},
     {key:'roi', label:'ROAS'},
   ],
+  ov: [
+    {key:'cost', label:'Chi phí (₫)'},
+    {key:'gmv', label:'GMV (₫)'},
+    {key:'roi', label:'ROAS'},
+    {key:'orders', label:'Đơn hàng'},
+    {key:'impressions', label:'Impressions'},
+    {key:'clicks', label:'Clicks'},
+    {key:'ctr', label:'CTR', isPct:true},
+    {key:'cvr', label:'CVR', isPct:true},
+    {key:'six_s_views', label:'6s Views'},
+    {key:'rate6', label:'6s Rate', isPct:true},
+  ],
 };
-// Active filters per prefix: { koc: [{key,min,max}, ...], pid: [...], vid: [...] }
-let activeFilters = { koc:[], pid:[], vid:[] };
+// Active filters per prefix: { koc: [{key,min,max}, ...], pid: [...], vid: [...], ov: [...] }
+let activeFilters = { koc:[], pid:[], vid:[], ov:[] };
 
 function sortBy(prefix, col) {
   const st = sortState[prefix];
@@ -477,6 +537,7 @@ function sortBy(prefix, col) {
   if(prefix==='koc') applyKOCFilters();
   if(prefix==='pid') applyPIDFilters();
   if(prefix==='vid') { vidPage=1; applyVidFilters(); }
+  if(prefix==='ov') applyOVFilters();
 }
 
 // ---- Dynamic filter panel logic ----
@@ -501,6 +562,7 @@ function applyFilters(prefix) {
   if(prefix==='koc') applyKOCFilters();
   if(prefix==='pid') applyPIDFilters();
   if(prefix==='vid') { vidPage=1; applyVidFilters(); }
+  if(prefix==='ov') applyOVFilters();
 }
 
 function renderFilterPanel(prefix) {
@@ -550,6 +612,39 @@ function passesActiveFilters(row, prefix) {
   return true;
 }
 
+// Ngày air video ("Time posted") → chuỗi chuẩn 'YYYY-MM-DD HH:mm' ('' nếu thiếu / '-').
+// Chuỗi ISO nên sort chữ = sort thời gian, lọc theo ngày chỉ cần so 10 ký tự đầu.
+function parsePostedAt(v) {
+  if(v===''||v===null||v===undefined) return '';
+  const p2=n=>String(n).padStart(2,'0');
+  const out=(y,mo,d,h,mi)=>{
+    y=+y; mo=+mo; d=+d;
+    if(mo>12 && d<=12) [mo,d]=[d,mo]; // kiểu Mỹ mm/dd → đảo lại
+    if(mo<1||mo>12||d<1||d>31) return '';
+    return `${y}-${p2(mo)}-${p2(d)}`+(h!==undefined&&h!==null?` ${p2(h)}:${p2(mi)}`:'');
+  };
+  if(v instanceof Date && !isNaN(v)) return out(v.getFullYear(),v.getMonth()+1,v.getDate(),v.getHours(),v.getMinutes());
+  if(typeof v==='number' && v>20000 && v<80000) { // Excel serial date (phần lẻ = giờ)
+    const d=new Date(Math.round((v-25569)*86400000));
+    const hasTime=Math.abs(v-Math.round(v))>1e-9 || v%1!==0;
+    return out(d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate(),hasTime?d.getUTCHours():undefined,d.getUTCMinutes());
+  }
+  const t=String(v).trim();
+  const tm=t.match(/[ T](\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?/);
+  let h, mi;
+  if(tm){ h=+tm[1]; mi=+tm[2]; if(tm[3]){ const pm=/p/i.test(tm[3]); if(h===12) h=pm?12:0; else if(pm) h+=12; } if(h>23||mi>59){h=undefined;} }
+  let m=t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if(m) return out(m[1],m[2],m[3],h,mi);
+  m=t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/); // dd/mm/yyyy (mặc định kiểu VN)
+  if(m) return out(m[3],m[2],m[1],h,mi);
+  return '';
+}
+function fmtPostedAt(s) {
+  if(!s) return '—';
+  const [d,t]=s.split(' '); const [y,mo,da]=d.split('-');
+  return `${da}/${mo}/${y}`+(t?` <span style="color:#8a94a6;">${t}</span>`:'');
+}
+
 // Generic sort: handles both numeric and string columns
 function sortRows(rows, col, dir) {
   rows.sort((a,b)=>{
@@ -569,6 +664,9 @@ function sortRows(rows, col, dir) {
 // ============================================================
 function toggleSidebar() {
   const collapsed = document.getElementById('sidebar').classList.toggle('collapsed');
+  document.documentElement.classList.toggle('sb-collapsed', collapsed);
+  // chart Overview tính theo bề ngang → vẽ lại sau khi hiệu ứng co/giãn xong
+  setTimeout(()=>{ if(ovCampAllRows.length && document.getElementById('tab-overview').style.display!=='none') renderOverviewChart(); }, 220);
   try { localStorage.setItem('tt_sidebar_collapsed', collapsed ? '1' : '0'); } catch(e) {}
 }
 (function initSidebar() {
@@ -577,6 +675,7 @@ function toggleSidebar() {
   if (saved === '1') {
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('sidebar').classList.add('collapsed');
+      document.documentElement.classList.add('sb-collapsed');
     });
   }
 })();
@@ -642,7 +741,7 @@ function resetFilters(prefix) {
   const search = document.getElementById(`${prefix}-search`);
   if(search) search.value='';
   sortState[prefix] = {col:'gmv', dir:'desc'};
-  if(prefix==='vid') { vidPage=1; vidCreativeFilter='all'; }
+  if(prefix==='vid') { ['vid-air-from','vid-air-to'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); vidPage=1; vidCreativeFilter='all'; if(vidPidFilter){ vidPidFilter=''; renderVideo(); return; } }
   if(prefix==='koc') { kocCreativeFilter='video'; }
   applyFilters(prefix);
 }
@@ -690,6 +789,8 @@ function processFiles(files) {
         if(!sn) sn=names[0];
         const ws=wb.Sheets[sn];
         const json=XLSX.utils.sheet_to_json(ws,{defval:''});
+        const missing=missingColumns(json);
+        if(missing.length) errors.push('"'+file.name+'": thiếu cột '+missing.join(', ')+' — kiểm tra lại file export (sheet "'+sn+'")');
         const parsed=parseRows(json);
         results.push({name:file.name,sheetName:sn,rawCount:json.length,rowCount:parsed.length,rows:parsed});
       }catch(err){
@@ -755,6 +856,19 @@ function updateFileQueue(){
 // ============================================================
 // PARSE
 // ============================================================
+// Báo thiếu cột bắt buộc (mỗi nhóm: chỉ cần 1 trong các tên) để không import âm thầm ra 0 dòng.
+function missingColumns(json) {
+  if(!json.length) return ['(file không có dòng dữ liệu)'];
+  const have=Object.keys(json[0]).map(k=>k.toLowerCase().trim());
+  const need=[
+    ['Post ID',['post id','video id']],
+    ['SPU ID',['spu id','product id']],
+    ['Creative type',['creative type']],
+    ['Cost',['cost']],
+    ['Gross revenue',['gross revenue','gmv']],
+  ];
+  return need.filter(n=>!n[1].some(k=>have.includes(k))).map(n=>n[0]);
+}
 function parseRows(json) {
   return json.map(r => {
     const get=(...keys)=>{for(const k of keys){const f=Object.keys(r).find(rk=>rk.toLowerCase().trim()===k.toLowerCase().trim());if(f!==undefined&&r[f]!==''&&r[f]!==null&&r[f]!==undefined)return r[f];}return '';};
@@ -799,11 +913,6 @@ function parseRows(json) {
     const computed6s  = impressions>0 && rate6s>0 ? Math.round(impressions*rate6s) : 0;
     const six_s_views = num('6s view','6s views') || computed6s;
 
-    const rate2s_raw = num('2-second ad video view rate','2s view rate');
-    const rate2s     = rate2s_raw>1 ? rate2s_raw/100 : rate2s_raw;
-    const r25 = num('25% ad video view rate'); const r50 = num('50% ad video view rate');
-    const r75 = num('75% ad video view rate'); const r100 = num('100% ad video view rate');
-
     const clicks  = num('Product ad clicks','ad clicks','clicks');
     const orders  = num('SKU orders','orders','sku orders');
     const cost    = num('Cost','cost');
@@ -826,22 +935,19 @@ function parseRows(json) {
     return {
       campaign:     get('Campaign name','campaign name') || '',
       campaign_id:  String(get('Campaign ID','campaign id')||''),
-      product_id:   String(get('Product ID','product id')||'N/A'),
+      product_id:   String(get('SPU ID','spu id','Product ID','product id')||'N/A'),
       product_name: get('Product name','product name','SPU name','spu name','product title','item name')||'',
       creative_type,
-      video_title:  get('Video title','video title')||'',
-      video_id:     String(get('Video ID','video id')||''),
+      video_title:  get('Creative','Video title','video title')||'',
+      video_id:     String(get('Post ID','post id','Video ID','video id')||''),
       account:      get('TikTok account','tiktok account','account')||'',
+      posted_at:    parsePostedAt(get('Time posted','time posted','Post time','post time','Posted time','Publish time','publish time')),
       status:       get('Status','status')||'',
       cost, orders, gmv,
       roi: cost>0 ? gmv/cost : 0,
       impressions, clicks,
       ctr, cvr,
-      rate2s, rate6s,
-      rate25: r25>1?r25/100:r25,
-      rate50: r50>1?r50/100:r50,
-      rate75: r75>1?r75/100:r75,
-      rate100: r100>1?r100/100:r100,
+      rate6s,
       six_s_views,
       aov: orders>0 ? gmv/orders : 0,
     };
@@ -857,7 +963,7 @@ function showUploadError(msg) {
   res.innerHTML=`<div style="background:#ffdad6;border:1px solid #f87171;border-radius:10px;padding:16px 20px;color:#ba1a1a;font-size:12px;"><strong>Lỗi:</strong> ${msg}</div>`;
 }
 function clearData() {
-  rawRows=[]; loadedFiles=[]; kocAllRows=[]; pidAllRows=[]; vidAllRows=[];
+  rawRows=[]; loadedFiles=[]; kocAllRows=[]; pidAllRows=[]; vidAllRows=[]; vidPidFilter=''; ['vid-air-from','vid-air-to'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
   document.getElementById('data-badge').style.display='none';
   document.getElementById('file-queue').style.display='none';
   document.getElementById('report-actions').style.display='none';
@@ -876,8 +982,13 @@ const fmtPct=n=>(!n||isNaN(n)||n===0)?'—':(n*100).toFixed(1)+'%';
 const sumF=(rows,f)=>rows.reduce((a,r)=>a+(r[f]||0),0);
 
 // Remove Vietnamese diacritics for accent-insensitive search
+// Link trang sản phẩm TikTok Shop VN theo PID
+function pidUrl(pid) {
+  return 'https://www.tiktok.com/shop/vn/pdp/'+encodeURIComponent(String(pid).trim())+'?source=product_detail&enter_from=product_detail&enter_method=feed_list_brand_cat';
+}
 function normalizeStr(s) {
   return String(s||'')
+    .trim()
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/đ/g,'d').replace(/Đ/g,'d');
@@ -996,119 +1107,152 @@ function renderOverview() {
     </div>`;
   }).join('');
 
-  renderOverviewChart();
-
-  // Campaign table
+  // Tổng hợp theo chiến dịch — 1 nguồn duy nhất cho cả bảng lẫn chart
   const camps={};
   r.forEach(row=>{
-    const k=row.campaign||'Unknown';
+    const k=String(row.campaign||row.campaign_id||'').trim()||'Không tên';
     if(!camps[k]) camps[k]={campaign:k,cost:0,gmv:0,orders:0,impressions:0,clicks:0,six_s_views:0};
-    camps[k].cost+=row.cost; camps[k].gmv+=row.gmv; camps[k].orders+=row.orders;
-    camps[k].impressions+=row.impressions; camps[k].clicks+=row.clicks; camps[k].six_s_views+=row.six_s_views;
+    const c=camps[k];
+    c.cost+=row.cost; c.gmv+=row.gmv; c.orders+=row.orders;
+    c.impressions+=row.impressions; c.clicks+=row.clicks; c.six_s_views+=row.six_s_views;
   });
-  const campArr=Object.values(camps).sort((a,b)=>b.gmv-a.gmv);
+  ovCampAllRows=Object.values(camps).map(c=>({
+    ...c,
+    roi:  c.cost>0?c.gmv/c.cost:0,
+    ctr:  c.impressions>0?c.clicks/c.impressions:0,
+    cvr:  c.clicks>0?c.orders/c.clicks:0,
+    rate6:c.impressions>0?c.six_s_views/c.impressions:0,
+  }));
+  applyOVFilters();
+}
+
+// Bảng + chart Overview dùng chung bộ lọc (tìm kiếm + trường lọc); KPI & phễu phía trên luôn là tổng toàn bộ
+function applyOVFilters() {
+  const q=normalizeStr(document.getElementById('ov-search')?.value||'');
+  const rows=ovCampAllRows.filter(c=>(!q||normalizeStr(c.campaign).includes(q))&&passesActiveFilters(c,'ov'));
+  sortRows(rows, sortState.ov.col, sortState.ov.dir);
+  window._ovFiltered=rows;
+  renderOVTable(rows);
+  renderOverviewChart();
+}
+
+const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+function renderOVTable(rows) {
+  const {col:sc,dir:sd}=sortState.ov;
   const thead=`<thead><tr>
-    ${thCell('Tên chiến dịch')}${thCell('Chi phí (₫)','text-align:right;')}${thCell('GMV (₫)','text-align:right;')}
-    ${thCell('ROAS','text-align:center;')}${thCell('Đơn','text-align:right;')}${thCell('Impressions','text-align:right;')}
-    ${thCell('Clicks','text-align:right;')}${thCell('CTR','text-align:right;')}${thCell('CVR','text-align:right;')}
-    ${thCell('6s Views','text-align:right;')}${thCell('6s Rate','text-align:right;')}
+    ${thSort('Tên chiến dịch','campaign','ov',sc,sd)}${thSort('Chi phí (₫)','cost','ov',sc,sd,'text-align:right;')}${thSort('GMV (₫)','gmv','ov',sc,sd,'text-align:right;')}
+    ${thSort('ROAS','roi','ov',sc,sd,'text-align:center;')}${thSort('Đơn','orders','ov',sc,sd,'text-align:right;')}${thSort('Impressions','impressions','ov',sc,sd,'text-align:right;')}
+    ${thSort('Clicks','clicks','ov',sc,sd,'text-align:right;')}${thSort('CTR','ctr','ov',sc,sd,'text-align:right;')}${thSort('CVR','cvr','ov',sc,sd,'text-align:right;')}
+    ${thSort('6s Views','six_s_views','ov',sc,sd,'text-align:right;')}${thSort('6s Rate','rate6','ov',sc,sd,'text-align:right;')}
   </tr></thead>`;
-  const tbody=`<tbody>${campArr.map(c=>{
-    const roi=c.cost>0?c.gmv/c.cost:0;
-    const ctr=c.impressions>0?c.clicks/c.impressions:0;
-    const cvr=c.clicks>0?c.orders/c.clicks:0;
-    const r6=c.impressions>0?c.six_s_views/c.impressions:0;
+  const tbody=`<tbody>${rows.length?rows.map(c=>{
     const short=c.campaign.length>50?c.campaign.substring(0,50)+'…':c.campaign;
     return `<tr style="border-bottom:1px solid #f0f0f0;">
-      ${tdCell(`<span title="${c.campaign}" style="font-size:12px;">${short}</span>`)}
+      ${tdCell(`<span title="${escHtml(c.campaign)}" style="font-size:12px;">${escHtml(short)}</span>`)}
       ${tdCell(fmt(c.cost,0),'text-align:right;font-family:monospace;font-size:11px;')}
       ${tdCell(fmt(c.gmv,0),'text-align:right;font-family:monospace;font-size:11px;font-weight:700;color:#185cff;')}
-      ${tdCell(roasBadge(roi),'text-align:center;')}
+      ${tdCell(roasBadge(c.roi),'text-align:center;')}
       ${tdCell(fmt(c.orders,0),'text-align:right;font-family:monospace;font-size:11px;')}
       ${tdCell(fmtM(c.impressions),'text-align:right;font-family:monospace;font-size:11px;')}
       ${tdCell(fmtM(c.clicks),'text-align:right;font-family:monospace;font-size:11px;')}
-      ${tdCell(fmtPct(ctr),'text-align:right;font-family:monospace;font-size:11px;')}
-      ${tdCell(fmtPct(cvr),'text-align:right;font-family:monospace;font-size:11px;')}
+      ${tdCell(fmtPct(c.ctr),'text-align:right;font-family:monospace;font-size:11px;')}
+      ${tdCell(fmtPct(c.cvr),'text-align:right;font-family:monospace;font-size:11px;')}
       ${tdCell(fmtM(c.six_s_views),'text-align:right;font-family:monospace;font-size:11px;')}
-      ${tdCell(fmtPct(r6),'text-align:right;font-family:monospace;font-size:11px;')}
+      ${tdCell(fmtPct(c.rate6),'text-align:right;font-family:monospace;font-size:11px;')}
     </tr>`;
-  }).join('')}</tbody>`;
+  }).join(''):`<tr><td colspan="11" style="padding:24px;text-align:center;color:#627086;font-size:12px;">Không có chiến dịch nào khớp bộ lọc</td></tr>`}</tbody>`;
   document.getElementById('ov-table').innerHTML=thead+tbody;
+  document.getElementById('ov-count').textContent=`Hiển thị ${rows.length} / ${ovCampAllRows.length} chiến dịch`;
 }
 
+// ---- Chart so sánh chiến dịch: cột (metric 1, trục trái) + line (metric 2, trục phải) ----
+const OV_CHART_METRICS=[
+  {key:'gmv',label:'GMV',kind:'money'},
+  {key:'cost',label:'Chi phí',kind:'money'},
+  {key:'orders',label:'Đơn hàng',kind:'num'},
+  {key:'roi',label:'ROAS',kind:'roas'},
+  {key:'impressions',label:'Impressions',kind:'num'},
+  {key:'clicks',label:'Clicks',kind:'num'},
+  {key:'rate6',label:'6s Rate',kind:'pct'},
+  {key:'ctr',label:'CTR',kind:'pct'},
+  {key:'cvr',label:'CVR',kind:'pct'},
+];
+function initOVChartSelects() {
+  const bar=document.getElementById('chart-metric'), line=document.getElementById('chart-metric-line');
+  if(!bar||bar.options.length) return;
+  bar.innerHTML=OV_CHART_METRICS.map(m=>`<option value="${m.key}">${m.label}</option>`).join('');
+  line.innerHTML='<option value="">— Không —</option>'+OV_CHART_METRICS.map(m=>`<option value="${m.key}">${m.label}</option>`).join('');
+  bar.value='gmv'; line.value='roi';
+}
+function ovFmtVal(v,kind,axis) {
+  if(kind==='pct') return axis?(v*100).toFixed(0)+'%':fmtPct(v);
+  if(kind==='roas') return v.toFixed(axis?1:2)+'x';
+  return fmtM(v);
+}
+function ovNiceMax(raw,kind) {
+  if(!(raw>0)) return kind==='pct'?0.05:1;
+  if(kind==='pct') return Math.min(1,Math.ceil(raw*100/5)*5/100)||0.05;
+  const mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  return Math.ceil(raw/mag)*mag;
+}
 function renderOverviewChart() {
-  const metric=document.getElementById('chart-metric').value;
-  const camps={};
-  rawRows.forEach(row=>{
-    const rawName=(row.campaign||row.campaign_id||'Không tên').trim();
-    const k=rawName||'Không tên';
-    if(!camps[k]) camps[k]={cost:0,gmv:0,orders:0,impressions:0,clicks:0,six_s_views:0};
-    camps[k].cost+=row.cost; camps[k].gmv+=row.gmv; camps[k].orders+=row.orders;
-    camps[k].impressions+=row.impressions; camps[k].clicks+=row.clicks; camps[k].six_s_views+=row.six_s_views;
+  initOVChartSelects();
+  const host=document.getElementById('ov-chart-svg');
+  if(!host) return;
+  const barKey=document.getElementById('chart-metric').value||'gmv';
+  const lineKey=document.getElementById('chart-metric-line').value;
+  const barDef=OV_CHART_METRICS.find(m=>m.key===barKey);
+  const lineDef=OV_CHART_METRICS.find(m=>m.key===lineKey)||null;
+  const src=window._ovFiltered||ovCampAllRows;
+  const arr=[...src].sort((a,b)=>(b[barKey]||0)-(a[barKey]||0)).slice(0,8);
+
+  if(!arr.length){ host.innerHTML='<div style="height:240px;display:flex;align-items:center;justify-content:center;color:#627086;font-size:12px;">Không có chiến dịch nào để so sánh</div>'; return; }
+
+  host.innerHTML='';
+  const W=Math.max(220,host.clientWidth||600), H=260;
+  const padL=58, padR=lineDef?58:12, padT=22, padB=46;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const barMax=ovNiceMax(Math.max(...arr.map(a=>a[barKey]||0)),barDef.kind);
+  const lineMax=lineDef?ovNiceMax(Math.max(...arr.map(a=>a[lineKey]||0)),lineDef.kind):1;
+  const slot=plotW/arr.length, bw=Math.min(64,slot*0.62);
+  const BAR='#185cff', LINE='#f59e0b', ticks=5;
+  const showVals=slot>=46; // khung quá hẹp → ẩn nhãn số (vẫn xem được qua tooltip) để không đè nhau
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;font-family:'JetBrains Mono',monospace;">`;
+  for(let i=0;i<=ticks;i++){
+    const y=padT+plotH-(plotH*i/ticks);
+    s+=`<line x1="${padL}" x2="${padL+plotW}" y1="${y}" y2="${y}" stroke="#e2e2e3" stroke-dasharray="${i?'3 3':''}"/>`;
+    s+=`<text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9" fill="${BAR}">${ovFmtVal(barMax*i/ticks,barDef.kind,true)}</text>`;
+    if(lineDef) s+=`<text x="${padL+plotW+6}" y="${y+3}" text-anchor="start" font-size="9" fill="#b45309">${ovFmtVal(lineMax*i/ticks,lineDef.kind,true)}</text>`;
+  }
+  const pts=[];
+  arr.forEach((a,i)=>{
+    const cx=padL+slot*i+slot/2;
+    const v=a[barKey]||0, h=Math.max(2,plotH*v/barMax), y=padT+plotH-h;
+    a._barLblY=y-5;
+    s+=`<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${h}" rx="3" fill="${BAR}"><title>${esc(a.campaign)} — ${barDef.label}: ${ovFmtVal(v,barDef.kind)}</title></rect>`;
+    if(showVals) s+=`<text x="${cx}" y="${y-5}" text-anchor="middle" font-size="9" font-weight="700" fill="${BAR}" stroke="white" stroke-width="3" paint-order="stroke">${ovFmtVal(v,barDef.kind)}</text>`;
+    const maxCh=Math.max(4,Math.floor(slot/6.2));
+    const lbl=a.campaign.length>maxCh?a.campaign.substring(0,maxCh-1)+'…':a.campaign;
+    s+=`<text x="${cx}" y="${padT+plotH+16}" text-anchor="middle" font-size="10" fill="#627086" font-family="'Plus Jakarta Sans',sans-serif"><title>${esc(a.campaign)}</title>${esc(lbl)}</text>`;
+    if(lineDef) pts.push({x:cx,y:padT+plotH-plotH*(a[lineKey]||0)/lineMax,v:a[lineKey]||0,name:a.campaign,barLblY:a._barLblY});
   });
-  const metricFn={
-    gmv:c=>c.gmv, cost:c=>c.cost, orders:c=>c.orders,
-    impressions:c=>c.impressions, clicks:c=>c.clicks,
-    roi:c=>c.cost>0?c.gmv/c.cost:0,
-    view6s_rate:c=>c.impressions>0?c.six_s_views/c.impressions:0,
-    ctr:c=>c.impressions>0?c.clicks/c.impressions:0,
-  };
-  const unitLabels={
-    gmv:'Đơn vị: ₫ (GMV)', cost:'Đơn vị: ₫ (Chi phí)', orders:'Đơn vị: đơn hàng',
-    impressions:'Đơn vị: lượt hiển thị', clicks:'Đơn vị: lượt click',
-    roi:'Đơn vị: x (ROAS)', view6s_rate:'Đơn vị: % (6s Rate)', ctr:'Đơn vị: % (CTR)',
-  };
-  document.getElementById('chart-unit-badge').textContent=unitLabels[metric]||'Đơn vị: ₫';
-
-  const arr=Object.entries(camps).map(([k,v])=>({label:k,val:(metricFn[metric]||metricFn.gmv)(v)}))
-    .sort((a,b)=>b.val-a.val).slice(0,8);
-  const isPct=['view6s_rate','ctr'].includes(metric);
-  const isRoas=metric==='roi';
-
-  // Determine "nice" max for axis
-  const rawMax=Math.max(...arr.map(a=>a.val),0.0001);
-  let axisMax;
-  if(isPct){ axisMax=Math.min(1, Math.ceil(rawMax*100/5)*5/100); if(axisMax<=0) axisMax=0.05; }
-  else {
-    const magnitude=Math.pow(10, Math.floor(Math.log10(rawMax||1)));
-    axisMax=Math.ceil(rawMax/magnitude)*magnitude;
-    if(axisMax===0) axisMax=1;
+  if(lineDef&&pts.length){
+    s+=`<polyline points="${pts.map(p=>p.x+','+p.y).join(' ')}" fill="none" stroke="${LINE}" stroke-width="2.5" stroke-linejoin="round"/>`;
+    pts.forEach(p=>{
+      s+=`<circle cx="${p.x}" cy="${p.y}" r="4" fill="white" stroke="${LINE}" stroke-width="2.5"><title>${esc(p.name)} — ${lineDef.label}: ${ovFmtVal(p.v,lineDef.kind)}</title></circle>`;
+      const ly=Math.abs((p.y-9)-p.barLblY)<12 ? Math.min(p.y+16,padT+plotH-3) : p.y-9; // né nhãn cột
+      if(showVals) s+=`<text x="${p.x}" y="${ly}" text-anchor="middle" font-size="9" font-weight="700" fill="#b45309" stroke="white" stroke-width="3" paint-order="stroke">${ovFmtVal(p.v,lineDef.kind)}</text>`;
+    });
   }
-
-  const fmtAxisVal=(v)=>{
-    if(isPct) return (v*100).toFixed(0)+'%';
-    if(isRoas) return v.toFixed(1)+'x';
-    return fmtM(v);
-  };
-
-  // Y-axis labels (5 ticks, top to bottom)
-  const ticks=5;
-  let axisHtml='';
-  for(let i=ticks;i>=0;i--){
-    axisHtml+=`<div>${fmtAxisVal(axisMax*i/ticks)}</div>`;
-  }
-  document.getElementById('ov-chart-yaxis').innerHTML=axisHtml;
-
-  // Gridlines + bars
-  let gridHtml='<div class="bar-chart-grid">';
-  for(let i=0;i<=ticks;i++) gridHtml+='<div class="bar-chart-grid-line"></div>';
-  gridHtml+='</div>';
-
-  const barsHtml=arr.map(a=>{
-    const h=Math.max(2,Math.round((a.val/axisMax)*186));
-    const valStr=isPct?fmtPct(a.val):isRoas?a.val.toFixed(2)+'x':fmtM(a.val);
-    return `<div class="bar-col">
-      <div class="bar-col-val">${valStr}</div>
-      <div class="bar-col-bar" style="height:${h}px;" title="${a.label}: ${valStr}"></div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('ov-chart').innerHTML=gridHtml+barsHtml;
-  document.getElementById('ov-chart-labels').innerHTML=arr.map(a=>{
-    const short=a.label.length>18?a.label.substring(0,18)+'…':a.label;
-    return `<div class="bar-col-lbl" style="flex:1;" title="${a.label}">${short}</div>`;
-  }).join('');
+  // Tên trục
+  s+=`<text x="${padL}" y="${H-6}" font-size="10" fill="${BAR}" font-weight="700" font-family="'Plus Jakarta Sans',sans-serif">■ ${barDef.label} (trục trái)</text>`;
+  if(lineDef) s+=`<text x="${padL+plotW}" y="${H-6}" text-anchor="end" font-size="10" fill="#b45309" font-weight="700" font-family="'Plus Jakarta Sans',sans-serif">● ${lineDef.label} (trục phải)</text>`;
+  s+='</svg>';
+  host.innerHTML=s;
 }
+window.addEventListener('resize',()=>{ if(document.getElementById('tab-overview')?.style.display!=='none'&&ovCampAllRows.length) renderOverviewChart(); });
 
 // ============================================================
 // KOC REPORT
@@ -1196,7 +1340,7 @@ function renderKOCTable(rows) {
     ${thSort('Đơn','orders','koc',sc,sd,'text-align:right;')}${thSort('AOV (₫)','aov','koc',sc,sd,'text-align:right;')}
   </tr></thead>`;
   const tbody=`<tbody>${rows.map(r=>`<tr style="border-bottom:1px solid #f0f0f0;">
-    ${tdCell(`<span style="font-weight:600;">${r.account}</span>`)}
+    ${tdCell(`<span class="cell-1line" title="${escHtml(r.account)}" style="font-weight:600;max-width:220px;">${escHtml(r.account)}</span>`)}
     ${tdCell(fmt(r.gmv,0),'text-align:right;font-family:monospace;font-weight:700;color:#185cff;')}
     ${tdCell(fmt(r.cost,0),'text-align:right;font-family:monospace;')}
     ${tdCell(roasBadge(r.roi),'text-align:center;')}
@@ -1261,7 +1405,7 @@ function handlePidNameFile(files) {
       if (matched===0) {
         statusEl.innerHTML = `<span style="color:#ba1a1a;">Không tìm thấy cột Product ID + Product name hợp lệ trong file này.</span>`;
       } else {
-        statusEl.innerHTML = `<span style="color:#16a34a;">Đã nạp ${matched} tên sản phẩm. Đang cập nhật bảng...</span>`;
+        statusEl.innerHTML = `<span style="color:#16a34a;">Đã nạp ${matched} tên sản phẩm.</span>`;
         if (rawRows.length) renderPID();
       }
     } catch(err) {
@@ -1318,7 +1462,7 @@ function renderPID() {
 function applyPIDFilters() {
   const q=normalizeStr(document.getElementById('pid-search')?.value||'');
   let rows=pidAllRows.filter(r=>
-    (!q||normalizeStr(r.pid).includes(q))&&
+    (!q||normalizeStr(r.pid).includes(q)||normalizeStr(r.product_name).includes(q))&&
     passesActiveFilters(r,'pid')
   );
   const {col,dir}=sortState.pid;
@@ -1338,7 +1482,7 @@ function renderPIDTable(rows) {
     ${thSort('Đơn','orders','pid',sc,sd,'text-align:right;')}${thSort('AOV (₫)','aov','pid',sc,sd,'text-align:right;')}
   </tr></thead>`;
   const tbody=`<tbody>${rows.map(p=>`<tr style="border-bottom:1px solid #f0f0f0;">
-    ${tdCell(`<span style="font-family:monospace;font-size:10px;">${p.pid}</span>`)}
+    ${tdCell(`<a href="${pidUrl(p.pid)}" target="_blank" rel="noopener noreferrer" title="Mở sản phẩm trên TikTok Shop" style="font-family:monospace;font-size:10px;color:#185cff;text-decoration:underline;">${p.pid}</a>`)}
     ${tdCell(`<span style="font-family:monospace;font-size:10px;white-space:normal;word-break:break-word;">${p.product_name||'—'}</span>`,'min-width:340px;')}
     ${tdCell(fmt(p.gmv,0),'text-align:right;font-family:monospace;font-weight:700;color:#185cff;')}
     ${tdCell(fmt(p.cost,0),'text-align:right;font-family:monospace;')}
@@ -1386,9 +1530,36 @@ function exportPID() {
 // ============================================================
 // CREATIVE REPORT
 // ============================================================
+function setVidPidFilter(pid) {
+  vidPidFilter = pid || '';
+  renderVideo();
+}
+// Danh sách PID cho dropdown, xếp theo GMV giảm dần, kèm tên nếu đã nạp
+function renderVidPidOptions() {
+  const sel = document.getElementById('vid-pid-filter');
+  if (!sel) return;
+  const agg = {};
+  rawRows.forEach(r => {
+    const pid = String(r.product_id||'').trim();
+    if (!pid || pid==='N/A') return;
+    agg[pid] = (agg[pid]||0) + (r.gmv||0);
+  });
+  const pids = Object.keys(agg).sort((a,b)=>agg[b]-agg[a]);
+  if (vidPidFilter && !(vidPidFilter in agg)) vidPidFilter = ''; // PID không còn trong dữ liệu (đổi/xoá file)
+  const nameOf = pid => pidNameMap.get(pid) || (pidAllRows.find(x=>x.pid===pid)||{}).product_name || '';
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  sel.innerHTML = '<option value="">Tất cả PID ('+pids.length+')</option>' + pids.map(pid => {
+    const n = nameOf(pid);
+    const label = pid + (n ? ' · ' + (n.length>40 ? n.slice(0,40)+'…' : n) : '');
+    return `<option value="${esc(pid)}"${pid===vidPidFilter?' selected':''} title="${esc(n)}">${esc(label)}</option>`;
+  }).join('');
+}
+
 function renderVideo() {
+  renderVidPidOptions();
   const creativeRows = rawRows.filter(r =>
-    r.creative_type === 'Video' || r.creative_type === 'Product card'
+    (r.creative_type === 'Video' || r.creative_type === 'Product card') &&
+    (!vidPidFilter || String(r.product_id||'').trim() === vidPidFilter)
   );
 
   // === Group by Video ID (Video) or PID (Product card) ===
@@ -1407,12 +1578,11 @@ function renderVideo() {
         video_id:   r.video_id,
         product_id: r.product_id,
         account:    r.account,
+        posted_at:  r.posted_at || '',
         campaign:   r.campaign,
         cost: 0, gmv: 0, orders: 0,
         impressions: 0, clicks: 0, six_s_views: 0,
-        _imp_rate6s: 0, _imp_rate2s: 0,
-        _imp_rate25: 0, _imp_rate50: 0,
-        _imp_rate75: 0, _imp_rate100: 0,
+        _imp_rate6s: 0,
         _imp_ctr: 0, _imp_total: 0,
         pids: new Set(), campaigns: new Set(),
       };
@@ -1426,17 +1596,13 @@ function renderVideo() {
     a.six_s_views += r.six_s_views;
     if (r.impressions > 0) {
       a._imp_rate6s  += (r.rate6s  || 0) * r.impressions;
-      a._imp_rate2s  += (r.rate2s  || 0) * r.impressions;
-      a._imp_rate25  += (r.rate25  || 0) * r.impressions;
-      a._imp_rate50  += (r.rate50  || 0) * r.impressions;
-      a._imp_rate75  += (r.rate75  || 0) * r.impressions;
-      a._imp_rate100 += (r.rate100 || 0) * r.impressions;
       a._imp_ctr     += (r.ctr     || 0) * r.impressions;
       a._imp_total   += r.impressions;
     }
     if (r.product_id && r.product_id !== 'N/A') a.pids.add(r.product_id);
     if (r.campaign_id) a.campaigns.add(r.campaign_id);
     if (!a.account && r.account) a.account = r.account;
+    if (!a.posted_at && r.posted_at) a.posted_at = r.posted_at;
   });
 
   // Finalize: weighted-average rates, recompute ROI/CVR/AOV
@@ -1445,11 +1611,6 @@ function renderVideo() {
     return {
       ...a,
       rate6s:  a._imp_rate6s  / imp,
-      rate2s:  a._imp_rate2s  / imp,
-      rate25:  a._imp_rate25  / imp,
-      rate50:  a._imp_rate50  / imp,
-      rate75:  a._imp_rate75  / imp,
-      rate100: a._imp_rate100 / imp,
       ctr:     a._imp_ctr     / imp,
       cvr:  a.clicks > 0 ? a.orders / a.clicks  : 0,
       aov:  a.orders > 0 ? a.gmv    / a.orders   : 0,
@@ -1500,8 +1661,13 @@ function applyVidFilters() {
     kpiCard('TỔNG GMV', fmtM(totGMV)+'₫', fmt(totOrders,0)+' đơn', 'payments')+
     kpiCard('ROAS', totROAS.toFixed(2)+'x', 'GMV / Chi phí', 'show_chart');
 
+  let airFrom=document.getElementById('vid-air-from')?.value||'';
+  let airTo  =document.getElementById('vid-air-to')?.value||'';
+  if(airFrom&&airTo&&airFrom>airTo) [airFrom,airTo]=[airTo,airFrom]; // chọn ngược thì tự đảo
+  const airDay =r=>(r.posted_at||'').slice(0,10);
   let rows=typeRows.filter(r=>
-    (!q||normalizeStr(r.account).includes(q)||r.video_id.includes(q)||normalizeStr(r.product_id).includes(q))&&
+    (!airFrom||(airDay(r)&&airDay(r)>=airFrom))&&(!airTo||(airDay(r)&&airDay(r)<=airTo))&&
+    (!q||normalizeStr(r.account).includes(q)||normalizeStr(r.video_id).includes(q)||normalizeStr(r.product_id).includes(q)||(r.pid_list||'').includes(q))&&
     passesActiveFilters(r,'vid')
   );
   const {col,dir}=sortState.vid;
@@ -1512,14 +1678,13 @@ function applyVidFilters() {
 
 function renderVidTable(rows) {
   const {col:sc,dir:sd}=sortState.vid;
-  const showVideoCols = vidCreativeFilter!=='product_card';
-  const thead=`<thead><tr>
+    const thead=`<thead><tr>
     ${thSort('Video ID','video_id','vid',sc,sd)}
     ${thSort('KOC / Account','account','vid',sc,sd)}
+    ${thSort('Ngày air','posted_at','vid',sc,sd)}
     ${vidCreativeFilter==='all'?thSort('Loại','creative_type','vid',sc,sd,'text-align:center;'):''}
     ${thSort('GMV(₫)','gmv','vid',sc,sd,'text-align:right;')}${thSort('Chi phí','cost','vid',sc,sd,'text-align:right;')}${thSort('ROAS','roi','vid',sc,sd,'text-align:center;')}
     ${thSort('Imp.','impressions','vid',sc,sd,'text-align:right;')}${thSort('6s Views','six_s_views','vid',sc,sd,'text-align:right;')}${thSort('6s Rate','rate6s','vid',sc,sd,'text-align:right;')}
-    ${showVideoCols?`${thSort('2s Rate','rate2s','vid',sc,sd,'text-align:right;')}${thSort('25%','rate25','vid',sc,sd,'text-align:right;')}${thSort('50%','rate50','vid',sc,sd,'text-align:right;')}${thSort('75%','rate75','vid',sc,sd,'text-align:right;')}${thSort('100%','rate100','vid',sc,sd,'text-align:right;')}`:''}
     ${thSort('Clicks','clicks','vid',sc,sd,'text-align:right;')}${thSort('CTR','ctr','vid',sc,sd,'text-align:right;')}${thSort('CVR','cvr','vid',sc,sd,'text-align:right;')}
     ${thSort('Đơn','orders','vid',sc,sd,'text-align:right;')}${thSort('AOV(₫)','aov','vid',sc,sd,'text-align:right;')}
   </tr></thead>`;
@@ -1532,14 +1697,19 @@ function renderVidTable(rows) {
   const start=(vidPage-1)*vidPageSize;
   const pageRows=rows.slice(start,start+vidPageSize);
 
-  const tbody=`<tbody>${pageRows.map(r=>{
+  const colCount=(thead.match(/<th[ >]/g)||[]).length;
+  const emptyRow=total===0?`<tr><td colspan="${colCount}" style="padding:28px;text-align:center;color:#627086;font-size:12px;">Không có creative nào khớp bộ lọc</td></tr>`:'';
+  const tbody=`<tbody>${emptyRow}${pageRows.map(r=>{
     const isProductCard = r.creative_type==='Product card';
-    const videoIdCell = isProductCard ? '—' : `<span style="font-family:monospace;font-size:10px;">${r.video_id}</span>`;
-    const accountCell = `<span style="font-weight:600;font-size:11px;">${r.account||'—'}</span>`;
-    const typeBadge = `<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;${isProductCard?'background:#fff3e0;color:#e65100;':'background:#dce8ff;color:#185cff;'}">${isProductCard?'Product card':'Video'}</span>`;
+    const videoIdCell = isProductCard
+      ? (r.product_id&&r.product_id!=='N/A' ? `<a href="${pidUrl(r.product_id)}" target="_blank" rel="noopener noreferrer" title="Product card — mở sản phẩm trên TikTok Shop" style="font-family:monospace;font-size:10px;color:#e65100;white-space:nowrap;">PID ${r.product_id}</a>` : '—')
+      : `<span style="font-family:monospace;font-size:10px;">${r.video_id}</span>`;
+    const accountCell = `<span class="cell-1line" title="${escHtml(r.account||'')}" style="font-weight:600;font-size:11px;">${escHtml(r.account||'—')}</span>`;
+    const typeBadge = `<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;${isProductCard?'background:#fff3e0;color:#e65100;':'background:#dce8ff;color:#185cff;'}">${isProductCard?'Product card':'Video'}</span>`;
     return `<tr style="border-bottom:1px solid #f0f0f0;">
       ${tdCell(videoIdCell,'min-width:110px;')}
       ${tdCell(accountCell,'min-width:110px;')}
+      ${tdCell(fmtPostedAt(r.posted_at),'font-family:monospace;font-size:10px;white-space:nowrap;')}
       ${vidCreativeFilter==='all'?tdCell(typeBadge,'text-align:center;'):''}
       ${tdCell(fmt(r.gmv,0),'text-align:right;font-family:monospace;font-weight:700;color:#185cff;')}
       ${tdCell(fmt(r.cost,0),'text-align:right;font-family:monospace;')}
@@ -1547,12 +1717,6 @@ function renderVidTable(rows) {
       ${tdCell(fmtM(r.impressions),'text-align:right;font-family:monospace;')}
       ${tdCell(fmtM(r.six_s_views),'text-align:right;font-family:monospace;')}
       ${tdCell(r.rate6s>0?fmtPct(r.rate6s):'—','text-align:right;font-family:monospace;')}
-      ${showVideoCols?`
-      ${tdCell(isProductCard?'—':fmtPct(r.rate2s),'text-align:right;font-family:monospace;')}
-      ${tdCell(isProductCard?'—':fmtPct(r.rate25),'text-align:right;font-family:monospace;')}
-      ${tdCell(isProductCard?'—':fmtPct(r.rate50),'text-align:right;font-family:monospace;')}
-      ${tdCell(isProductCard?'—':fmtPct(r.rate75),'text-align:right;font-family:monospace;')}
-      ${tdCell(isProductCard?'—':fmtPct(r.rate100),'text-align:right;font-family:monospace;')}`:''}
       ${tdCell(fmtM(r.clicks),'text-align:right;font-family:monospace;')}
       ${tdCell(fmtPct(r.ctr),'text-align:right;font-family:monospace;')}
       ${tdCell(fmtPct(r.cvr),'text-align:right;font-family:monospace;')}
@@ -1606,15 +1770,11 @@ function exportVid() {
   exportToXLSX(rows,[
     {label:'Video ID',key:'video_id'},
     {label:'Account',key:'account'},
+    {label:'Ngày air',key:'posted_at'},
     {label:'PID',key:'pid_list'},
     {label:'Impressions',key:'impressions'},
     {label:'6s Views',key:'six_s_views'},
     {label:'6s Rate (%)',get:r=>(r.rate6s*100).toFixed(2)},
-    {label:'2s Rate (%)',get:r=>(r.rate2s*100).toFixed(2)},
-    {label:'25% (%)',get:r=>(r.rate25*100).toFixed(2)},
-    {label:'50% (%)',get:r=>(r.rate50*100).toFixed(2)},
-    {label:'75% (%)',get:r=>(r.rate75*100).toFixed(2)},
-    {label:'100% (%)',get:r=>(r.rate100*100).toFixed(2)},
     {label:'Clicks',key:'clicks'},
     {label:'CTR (%)',get:r=>(r.ctr*100).toFixed(2)},
     {label:'CVR (%)',get:r=>(r.cvr*100).toFixed(2)},
@@ -1637,18 +1797,18 @@ function downloadReport() {
   const mm=String(today.getMonth()+1).padStart(2,'0');
   const yyyy=today.getFullYear();
   const reportName=nameInput||('GMX_Report_'+dd+mm+String(yyyy).slice(-2));
-  const filename=reportName.replace(/[^a-zA-Z0-9_\-\.]/g,'_')+'.html';
+  // Giữ nguyên tiếng Việt có dấu & khoảng trắng; chỉ loại ký tự hệ điều hành cấm trong tên file
+  const filename=(reportName.normalize('NFC').replace(/[\\\/:*?"<>|\x00-\x1f]/g,'_').replace(/\s+/g,' ').trim()||'Report')+'.html';
 
   // Serialize data
   const safeRows=rawRows.map(function(r){return{
     campaign:r.campaign,campaign_id:r.campaign_id,
     product_id:r.product_id,product_name:r.product_name,creative_type:r.creative_type,
     video_title:r.video_title,video_id:r.video_id,
-    account:r.account,status:r.status,
+    account:r.account,posted_at:r.posted_at||'',status:r.status,
     cost:r.cost,orders:r.orders,gmv:r.gmv,roi:r.roi,
     impressions:r.impressions,clicks:r.clicks,ctr:r.ctr,cvr:r.cvr,
-    rate2s:r.rate2s,rate6s:r.rate6s,
-    rate25:r.rate25,rate50:r.rate50,rate75:r.rate75,rate100:r.rate100,
+    rate6s:r.rate6s,
     six_s_views:r.six_s_views,aov:r.aov,
   };});
 
@@ -1671,6 +1831,17 @@ function downloadReport() {
     const ra=h.querySelector('#report-actions'); if(ra) ra.style.display='none';
     const fq=h.querySelector('#file-queue'); if(fq) fq.style.display='none';
     const ur=h.querySelector('#upload-result'); if(ur) ur.style.display='none';
+    // cloneNode không giữ lựa chọn hiện tại của <select> → ghi lại thành attribute selected
+    ['chart-metric','chart-metric-line'].forEach(function(id){
+      const live=document.getElementById(id), cl=h.querySelector('#'+id);
+      if(!live||!cl) return;
+      cl.querySelectorAll('option').forEach(function(o){ if(o.value===live.value) o.setAttribute('selected',''); else o.removeAttribute('selected'); });
+    });
+    // Bộ lọc/ô tìm kiếm của bảng Overview không mang sang report
+    const ovs=h.querySelector('#ov-search'); if(ovs) ovs.removeAttribute('value');
+    const ovp=h.querySelector('#ov-filter-panel'); if(ovp){ ovp.classList.remove('open'); ovp.innerHTML=''; }
+    // Trạng thái thu gọn sidebar là của người xuất → bỏ, để người mở report dùng lựa chọn của họ
+    h.classList.remove('sb-collapsed'); const sb=h.querySelector('#sidebar'); if(sb) sb.classList.remove('collapsed');
 
     // Inject boot data as first script in head
     const bootEl=document.createElement('script');

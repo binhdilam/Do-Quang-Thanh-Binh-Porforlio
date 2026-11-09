@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GMV Max Rules — automate TikTok Shop GMV Max, video and LIVE</title>
+<meta name="description" content="A web app that automates TikTok Shop GMV Max: rules for video campaigns, LIVE campaigns that switch on and off by themselves, and a log of every change. Try the live demo.">
+<link rel="canonical" href="https://doquangthanhbinh.id.vn/gmvmax-tool">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://doquangthanhbinh.id.vn/gmvmax-tool">
+<meta property="og:title" content="GMV Max Rules — automate TikTok Shop GMV Max">
+<meta property="og:description" content="Rules for video campaigns, LIVE campaigns on autopilot, and a log of every change. Try the live demo on sample data.">
+<meta property="og:image" content="https://doquangthanhbinh.id.vn/gmvmax-tool/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --paper:#fff; --paper-2:#F5F9F7; --paper-3:#E9F1ED;
+  --line:#DCE7E2; --line-soft:#EDF3F0;
+  --ink:#0F1F19; --ink-2:#3B4E46; --ink-3:#64756D; --ink-4:#8A9A93;
+  --brand:#1E5245; --brand-deep:#123A30; --brand-soft:#3F8570; --brand-wash:#E6F2ED;
+  --amber:#C4762F; --amber-deep:#9C5A1E; --amber-soft:#E0A567; --amber-wash:#FDF2E6;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --bar-h:64px;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar-h) + 12px);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+summary{cursor:pointer}
+:where(a,button,summary):focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
+::selection{background:var(--brand);color:#fff}
+
+/* Hide the inactive language. !important so no component rule can win. */
+html[data-lang="en"] [lang="vi"]{display:none!important}
+html[data-lang="vi"] [lang="en"]{display:none!important}
+
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px}
+@media(min-width:768px){.wrap{padding:0 32px}}
+
+.display{font-family:"Fraunces",Georgia,serif;font-weight:500;letter-spacing:-.03em;line-height:1;text-wrap:balance}
+.tnum{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid color-mix(in oklab,var(--brand) 22%,transparent);background:var(--brand-wash);color:var(--brand-deep);border-radius:99px;padding:5px 12px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow.amber{border-color:color-mix(in oklab,var(--amber) 28%,transparent);background:var(--amber-wash);color:var(--amber-deep)}
+.lede{max-width:62ch;color:var(--ink-2);font-size:17px;text-wrap:pretty}
+h2.display{font-size:clamp(30px,5vw,58px)}
+
+/* ---------- The two highlighted buttons ---------- */
+.btn{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;border-radius:99px;font-weight:700;font-size:15px;text-decoration:none;border:0;cursor:pointer;color:#fff;padding:8px 8px 8px 24px;transition:transform .5s var(--ease),background .5s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn .arr{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);transition:transform .5s var(--ease)}
+.btn:hover .arr{transform:translate(2px,-2px) scale(1.06)}
+.btn svg{width:16px;height:16px}
+.btn-demo{background:var(--amber-deep);box-shadow:0 10px 28px -10px rgba(156,90,30,.7)}
+.btn-demo:hover{background:#7f4614}
+.btn-hire{background:var(--brand);box-shadow:0 10px 28px -10px rgba(18,58,48,.7)}
+.btn-hire:hover{background:var(--brand-deep)}
+.btn-sm{font-size:13px;padding:5px 5px 5px 16px;gap:8px}
+.btn-sm .arr{width:28px;height:28px}
+.btn-sm svg{width:13px;height:13px}
+html.demo-soon .btn-demo{background:var(--paper-2);color:var(--ink-3);box-shadow:none;border:1px solid var(--line);pointer-events:none}
+html.demo-soon .btn-demo .arr{background:var(--paper-3)}
+.btn-demo .soon,html.demo-soon .btn-demo .live{display:none}
+html.demo-soon .btn-demo .soon{display:inline}
+
+/* ---------- Sticky top bar ---------- */
+.bar{position:sticky;top:0;z-index:50;height:var(--bar-h);background:color-mix(in oklab,#fff 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;letter-spacing:-.01em}
+.brand i{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--brand);color:#fff;font-style:normal;font-family:"Fraunces",serif;font-weight:600;font-size:17px}
+.brand span{font-size:15px}
+.bar-actions{display:flex;align-items:center;gap:8px}
+.langs{display:flex;background:var(--paper-2);border:1px solid var(--line);border-radius:99px;padding:3px}
+.langs button{font:inherit;font-size:11px;font-weight:700;letter-spacing:.06em;border:0;background:transparent;color:var(--ink-3);min-height:30px;padding:0 10px;border-radius:99px;cursor:pointer;transition:all .4s var(--ease)}
+.langs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+@media(max-width:560px){
+  .brand span{display:none}
+  .btn-sm{padding:0 14px;font-size:12.5px}
+  .bar .btn .arr{display:none}
+  .bar-actions{gap:6px}
+  .langs button{padding:0 8px}
+}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;padding:52px 0 24px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0 0 auto 0;height:620px;pointer-events:none;background:radial-gradient(46% 50% at 82% 0%,var(--brand-wash),transparent 68%),radial-gradient(40% 46% at 8% 6%,var(--amber-wash),transparent 66%)}
+.hero .wrap{position:relative}
+.hero h1{font-size:clamp(40px,7.4vw,92px);margin-top:20px;max-width:15ch}
+.hero .lede{margin-top:22px;font-size:clamp(16px,2vw,19px)}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:30px}
+.fine{margin-top:14px;font-size:12px;color:var(--ink-4)}
+.cover{margin-top:40px}
+.benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
+@media(min-width:860px){.benefits{grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}}
+.benefit{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px 15px}
+.benefit b{display:block;font-size:14px;font-weight:700;line-height:1.25}
+.benefit span{display:block;margin-top:5px;font-size:12.5px;color:var(--ink-3);line-height:1.45}
+
+.bezel{background:color-mix(in oklab,var(--paper-3) 60%,transparent);border:1px solid var(--line);border-radius:28px;padding:7px}
+.bezel>.core{background:#fff;border-radius:21px;overflow:hidden;box-shadow:inset 0 1px 1px rgba(255,255,255,.9),0 1px 2px rgba(15,31,25,.04),0 12px 32px -12px rgba(19,58,48,.16)}
+.bezel.amber{background:color-mix(in oklab,var(--amber-wash) 75%,transparent);border-color:color-mix(in oklab,var(--amber-soft) 40%,transparent)}
+.bezel.brand{background:color-mix(in oklab,var(--brand-wash) 75%,transparent);border-color:color-mix(in oklab,var(--brand-soft) 32%,transparent)}
+.cap{margin-top:12px;font-size:12.5px;color:var(--ink-3);text-align:center;text-wrap:pretty}
+figure img{cursor:zoom-in}
+
+section{padding:72px 0}
+@media(min-width:768px){section{padding:120px 0}}
+.head{margin-bottom:34px}
+@media(min-width:768px){.head{margin-bottom:48px}}
+.head h2{margin-top:16px}
+.head .lede{margin-top:16px}
+.area{background:var(--paper-2);border-block:1px solid var(--line-soft)}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;border-radius:99px;padding:5px 11px}
+.tag.v{background:var(--amber-wash);color:var(--amber-deep)}
+.tag.l{background:var(--brand-wash);color:var(--brand-deep)}
+
+/* ---------- Before / after ---------- */
+.ba-tabs{display:none}
+.ba{display:grid;gap:14px}
+.ba-row{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:860px){.ba-row{grid-template-columns:.7fr 1fr 1.2fr;gap:16px;align-items:stretch}}
+.ba-job{font-weight:700;font-size:15px;padding:4px 2px}
+.ba-job small{display:block;font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px}
+.ba-cell{border-radius:20px;padding:18px 20px;font-size:14.5px;line-height:1.55}
+.ba-cell b{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+.ba-before{background:var(--paper-2);border:1px solid var(--line);color:var(--ink-3)}
+.ba-before b{color:var(--ink-4)}
+.ba-after{background:var(--brand-wash);border:1px solid color-mix(in oklab,var(--brand-soft) 30%,transparent);color:var(--ink)}
+.ba-after b{color:var(--brand)}
+
+/* ---------- Feature rows (desktop: alternating split) ---------- */
+.swipe-hint{display:none}
+.rows{display:grid;gap:72px}
+.row{display:grid;gap:26px;align-items:center}
+@media(min-width:960px){
+  .row{grid-template-columns:5fr 7fr;gap:56px}
+  .row.flip{grid-template-columns:7fr 5fr}
+  .row.flip .txt{order:2}
+}
+.txt h3{font-size:clamp(22px,3vw,32px);font-family:"Fraunces",Georgia,serif;font-weight:500;letter-spacing:-.02em;line-height:1.12;margin-top:14px;text-wrap:balance}
+.txt p{margin-top:12px;color:var(--ink-2);font-size:15.5px;text-wrap:pretty}
+.txt ul{list-style:none;padding:0;margin-top:16px;display:grid;gap:10px}
+.txt li{display:flex;gap:11px;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.txt li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--brand-wash) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231E5245' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/11px no-repeat}
+.area.v .txt li::before{background-color:var(--amber-wash);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239C5A1E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+
+/* ---------- Phones & extras ---------- */
+.phones{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 20px 14px;margin:0 -20px;scrollbar-width:none}
+.phones::-webkit-scrollbar{display:none}
+.phones .ph{flex:0 0 min(56vw,220px);scroll-snap-align:center}
+@media(min-width:900px){.phones{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible;padding:6px 0 0;margin:0}.phones .ph{flex:none}}
+.extras{display:grid;gap:14px;margin-top:34px}
+@media(min-width:760px){.extras{grid-template-columns:repeat(3,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px}
+.card p{margin-top:8px;font-size:14px;color:var(--ink-3)}
+.card h4{font-size:15px;font-weight:700}
+.ico{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--brand-wash);color:var(--brand);margin-bottom:12px}
+.ico svg{width:17px;height:17px}
+
+/* ---------- Safety (details: open on desktop, accordion on mobile) ---------- */
+.safety{display:grid;gap:14px}
+@media(min-width:700px){.safety{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.safety{grid-template-columns:repeat(3,1fr)}}
+.safe{background:#fff;border:1px solid var(--line);border-radius:22px;padding:0}
+.safe summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:14px 18px;font-size:15px;font-weight:700}
+.safe summary::-webkit-details-marker{display:none}
+.safe summary::after{content:"";flex:none;width:9px;height:9px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(45deg) translateY(-2px);transition:transform .4s var(--ease)}
+.safe[open] summary::after{transform:rotate(225deg)}
+.safe p{padding:0 18px 18px;font-size:14px;color:var(--ink-3)}
+@media(min-width:700px){
+  .safe summary{pointer-events:none;padding:20px 22px 0}
+  .safe summary::after{display:none}
+  .safe p{padding:8px 22px 22px}
+}
+
+/* ---------- Facts ---------- */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 18px}
+@media(min-width:800px){.facts{grid-template-columns:repeat(4,1fr)}}
+.fact b{display:block;font-size:clamp(28px,4vw,42px);color:var(--amber-deep);line-height:1}
+.fact span{display:block;margin-top:8px;font-size:12.5px;color:var(--ink-3);line-height:1.4}
+.stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;padding:22px 0 0;border-top:1px solid var(--line-soft)}
+.stack li{list-style:none;border:1px solid var(--line);background:var(--paper-2);border-radius:99px;padding:6px 13px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.pad{padding:22px}
+@media(min-width:768px){.pad{padding:40px}}
+
+/* ---------- Closing reminder ---------- */
+.final{padding:64px 0 90px}
+@media(min-width:768px){.final{padding:96px 0 110px}}
+.final-box{position:relative;overflow:hidden;border-radius:30px;background:var(--brand-deep);color:#fff;padding:40px 22px;text-align:center}
+@media(min-width:768px){.final-box{padding:80px 56px;border-radius:36px}}
+.final-box::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 70% at 85% 0%,rgba(224,165,103,.28),transparent 70%),radial-gradient(45% 60% at 8% 100%,rgba(127,184,162,.22),transparent 70%)}
+.final-box>*{position:relative}
+.final-box h2{font-size:clamp(28px,5vw,56px);max-width:18ch;margin:0 auto}
+.final-box p{margin:16px auto 0;max-width:52ch;color:#cfe2da;font-size:16px}
+.final-box .cta-row{justify-content:center}
+.final-box .btn-hire{background:#fff;color:var(--brand-deep);box-shadow:none}
+.final-box .btn-hire .arr{background:var(--brand-wash)}
+.final-box .btn-hire:hover{background:var(--brand-wash)}
+.contact{margin-top:26px;font-size:14px;color:#cfe2da}
+.contact a{color:#fff;font-weight:700;text-underline-offset:4px}
+
+footer{border-top:1px solid var(--line);padding:26px 0 40px;font-size:12px;color:var(--ink-4)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
+
+/* ---------- Screenshot viewer ---------- */
+.zoom{position:fixed;inset:0;z-index:100;background:rgba(15,31,25,.86);display:none;overflow:auto;-webkit-overflow-scrolling:touch}
+.zoom.on{display:block}
+.zoom img{width:max(100%,980px);max-width:none;margin:0 auto;cursor:zoom-out}
+.zoom button{position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font-size:22px;cursor:pointer}
+
+/* ---------- Reveal ---------- */
+.js .reveal{opacity:0;transform:translateY(1.6rem);filter:blur(4px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease)}
+.js .reveal.in{opacity:1;transform:none;filter:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none;filter:none;transition:none}}
+
+/* =====================================================
+   MOBILE (<760px): compact, scannable, swipe not scroll
+   ===================================================== */
+@media(max-width:759px){
+  .hero{padding:34px 0 8px}
+  .hero .lede{font-size:15.5px;margin-top:16px}
+  .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+  .cta-row .btn{padding:0 14px;font-size:14px;gap:6px;width:100%}
+  .cta-row .btn .arr{display:none}
+  .cover{margin-top:26px}
+  .bezel{border-radius:20px;padding:5px}
+  .bezel>.core{border-radius:15px}
+  .head .lede{font-size:15px}
+  .tnum{letter-spacing:-.03em}
+
+  /* before/after: a segmented control shows one group at a time */
+  .ba-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--paper-2);border:1px solid var(--line);border-radius:99px;padding:4px}
+  .ba-tabs button{flex:1;min-height:40px;border:0;border-radius:99px;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--ink-3);cursor:pointer}
+  .ba-tabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .ba[data-g="video"] .ba-row:not([data-g="video"]),
+  .ba[data-g="live"] .ba-row:not([data-g="live"]),
+  .ba[data-g="team"] .ba-row:not([data-g="team"]){display:none}
+  .ba{gap:12px}
+  .ba-row{gap:6px;padding:14px;border:1px solid var(--line);border-radius:20px;background:#fff}
+  .ba-job{padding:0 0 4px;font-size:14.5px}
+  .ba-job small{display:none}
+  .ba-cell{padding:10px 12px;border-radius:14px;font-size:13.5px}
+  .ba-cell b{margin-bottom:3px}
+
+  /* feature rows -> one swipe carousel per area */
+  .swipe-hint{display:block;margin:-14px 0 12px;font-size:12px;color:var(--ink-4)}
+  .rows{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:2px 20px 14px;scrollbar-width:none}
+  .rows::-webkit-scrollbar{display:none}
+  .row{flex:0 0 84%;scroll-snap-align:center;display:flex;flex-direction:column;gap:0;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;align-items:stretch}
+  .row figure{order:-1}
+  .row .bezel{border:0;border-radius:0;padding:0;background:var(--paper-2)}
+  .row .bezel>.core{border-radius:0;box-shadow:none}
+  .row figcaption{display:none}
+  .row .txt{padding:14px 16px 18px}
+  .row .txt h3{font-size:19px;margin-top:8px}
+  .row .txt p{font-size:13.5px;margin-top:7px}
+  .row .txt ul{display:none}
+  .js .rows .reveal{opacity:1;transform:none;filter:none}
+
+  /* phones + extras */
+  .extras{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:22px -20px 0;padding:2px 20px 10px;scrollbar-width:none}
+  .extras::-webkit-scrollbar{display:none}
+  .extras .card{flex:0 0 76%;scroll-snap-align:center}
+  .js .extras .reveal{opacity:1;transform:none;filter:none}
+
+  .safety{gap:8px}
+  .facts{gap:18px 14px}
+  .stack{gap:6px}
+  .stack li{padding:5px 11px;font-size:11.5px}
+  .final-box p{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="GMV Max Rules"><i>G</i><span>GMV Max Rules</span></a>
+    <div class="bar-actions">
+      <div class="langs" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang-btn="vi" aria-pressed="false">VI</button>
+      </div>
+      <a class="btn btn-sm btn-hire" data-hire href="/">
+        <span lang="en">Hire me</span><span lang="vi">Thuê tôi</span>
+        <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+      </a>
+      <a class="btn btn-sm btn-demo" data-demo href="/gmvmax-tool/demo" target="_blank" rel="noopener noreferrer">
+        <span class="live"><span lang="en">Live demo</span><span lang="vi">Dùng thử</span></span>
+        <span class="soon"><span lang="en">Demo soon</span><span lang="vi">Demo sắp có</span></span>
+        <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ Hero ============ -->
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow amber">
+      <span lang="en">Built by a media buyer, for media buyers</span>
+      <span lang="vi">Người chạy ads tự build cho người chạy ads</span>
+    </span>
+    <h1 class="display">
+      <span lang="en">GMV Max, without the daily grind.</span>
+      <span lang="vi">GMV Max, bớt việc tay mỗi ngày.</span>
+    </h1>
+    <p class="lede">
+      <span lang="en">Rules that handle your video campaigns, LIVE campaigns that switch on and off by themselves, and a log of every change — so your time goes on decisions, not on filtering videos and watching livestreams.</span>
+      <span lang="vi">Rule tự xử lý campaign video, campaign LIVE tự bật tắt, và log lại mọi thay đổi — để thời gian của bạn dành cho việc ra quyết định, không phải ngồi lọc video và canh livestream.</span>
+    </p>
+
+    <div class="cta-row">
+      <a class="btn btn-demo" data-demo href="/gmvmax-tool/demo" target="_blank" rel="noopener noreferrer">
+        <span class="live"><span lang="en">Try the live demo</span><span lang="vi">Dùng thử demo</span></span>
+        <span class="soon"><span lang="en">Demo coming soon</span><span lang="vi">Demo sắp có</span></span>
+        <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+      </a>
+      <a class="btn btn-hire" data-hire href="/">
+        <span lang="en">Hire me</span><span lang="vi">Thuê tôi</span>
+        <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+      </a>
+    </div>
+    <p class="fine">
+      <span lang="en">Click through every screen like a real user · sample data · no login · desktop and phone.</span>
+      <span lang="vi">Bấm thử từng màn hình như user thật · dữ liệu mẫu · không cần đăng nhập · máy tính và điện thoại.</span>
+    </p>
+
+    <div class="benefits">
+      <div class="benefit"><b><span lang="en">Less workload</span><span lang="vi">Giảm workload</span></b><span><span lang="en">Repetitive filtering and watching is done by rules and schedules.</span><span lang="vi">Việc lọc và canh lặp đi lặp lại giao cho rule và lịch.</span></span></div>
+      <div class="benefit"><b><span lang="en">Faster to work</span><span lang="vi">Làm nhanh hơn</span></b><span><span lang="en">Act on a whole group of videos at once instead of one by one.</span><span lang="vi">Xử lý cả nhóm video cùng lúc thay vì từng cái.</span></span></div>
+      <div class="benefit"><b><span lang="en">More effective</span><span lang="vi">Hiệu quả hơn</span></b><span><span lang="en">Decisions follow ROI and target, and every one is on record.</span><span lang="vi">Quyết định dựa trên ROI và target, mọi thứ đều có dấu vết.</span></span></div>
+      <div class="benefit"><b><span lang="en">Easier ad edits</span><span lang="vi">Chỉnh ads tiện hơn</span></b><span><span lang="en">Change budget and ROI target where you read the numbers — even from your phone.</span><span lang="vi">Chỉnh budget, ROI target ngay chỗ đọc số — kể cả trên điện thoại.</span></span></div>
+    </div>
+
+    <div class="cover reveal">
+      <div class="bezel brand"><div class="core">
+        <img src="/gmvmax-tool/assets/cover.webp" width="1800" height="1125" alt="GMV Max Rules running on a laptop and a phone: LIVE monitor and schedule">
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Workload: before / after ============ -->
+<section id="workload">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow"><span lang="en">What it takes off your plate</span><span lang="vi">Việc nó gánh thay bạn</span></span>
+      <h2 class="display"><span lang="en">Less clicking. Faster calls. Every change on record.</span><span lang="vi">Ít thao tác hơn. Quyết định nhanh hơn. Mọi thay đổi đều có dấu vết.</span></h2>
+      <p class="lede">
+        <span lang="en">The same daily job, before and after. It saves time on filtering, scheduling and watching, so you spend it on decisions.</span>
+        <span lang="vi">Cùng một công việc hằng ngày, trước và sau. Công cụ giúp giảm thời gian lọc, lên lịch và canh số, để bạn dành thời gian cho quyết định.</span>
+      </p>
+    </div>
+
+    <div class="ba-tabs" role="group" aria-label="Filter">
+      <button type="button" data-g="video" aria-pressed="true">Video</button>
+      <button type="button" data-g="live" aria-pressed="false">LIVE</button>
+      <button type="button" data-g="team" aria-pressed="false">Team</button>
+    </div>
+
+    <div class="ba" data-g="video">
+      <div class="ba-row reveal" data-g="video">
+        <div class="ba-job"><small>Video</small><span lang="en">Finding videos that burn budget</span><span lang="vi">Tìm video tiêu tiền không ra đơn</span></div>
+        <div class="ba-cell ba-before"><b><span lang="en">By hand</span><span lang="vi">Làm tay</span></b><span lang="en">Open Ads Manager and filter video by video.</span><span lang="vi">Mở Ads Manager và lọc từng video một.</span></div>
+        <div class="ba-cell ba-after"><b><span lang="en">With GMV Max Rules</span><span lang="vi">Với GMV Max Rules</span></b><span lang="en">A rule checks spend, ROI, GMV, CTR, days of falling ROI and video age on a schedule, and acts or alerts.</span><span lang="vi">Rule kiểm tra spend, ROI, GMV, CTR, số ngày ROI giảm và tuổi video theo lịch, rồi tự xử lý hoặc báo.</span></div>
+      </div>
+      <div class="ba-row reveal" data-g="video">
+        <div class="ba-job"><small>Video</small><span lang="en">Scaling or killing boosts</span><span lang="vi">Tăng hay tắt boost</span></div>
+        <div class="ba-cell ba-before"><b><span lang="en">By hand</span><span lang="vi">Làm tay</span></b><span lang="en">Decide one boost at a time, each in its own screen.</span><span lang="vi">Quyết định từng boost, mỗi cái một màn hình.</span></div>
+        <div class="ba-cell ba-after"><b><span lang="en">With GMV Max Rules</span><span lang="vi">Với GMV Max Rules</span></b><span lang="en">Paste up to 200 video IDs or run a rule once: create, kill, raise or extend boosts for the whole group after a Check step.</span><span lang="vi">Dán tới 200 video ID hoặc chạy một rule một lần: tạo, tắt, tăng hoặc gia hạn boost cho cả nhóm sau bước Check.</span></div>
+      </div>
+      <div class="ba-row reveal" data-g="live">
+        <div class="ba-job"><small>LIVE</small><span lang="en">Starting and ending a LIVE campaign</span><span lang="vi">Bật và tắt campaign LIVE</span></div>
+        <div class="ba-cell ba-before"><b><span lang="en">By hand</span><span lang="vi">Làm tay</span></b><span lang="en">Be online at the exact minute to create it, and remember to switch it off.</span><span lang="vi">Phải online đúng phút để tạo, rồi nhớ tắt khi hết phiên.</span></div>
+        <div class="ba-cell ba-after"><b><span lang="en">With GMV Max Rules</span><span lang="vi">Với GMV Max Rules</span></b><span lang="en">Fill the calendar once. At start time the campaign is created, at the end it is switched off — one LIVE campaign per account at a time.</span><span lang="vi">Lên lịch một lần. Đến giờ tự tạo campaign, hết giờ tự tắt — mỗi tài khoản chỉ một campaign LIVE tại một thời điểm.</span></div>
+      </div>
+      <div class="ba-row reveal" data-g="live">
+        <div class="ba-job"><small>LIVE</small><span lang="en">Watching a stream</span><span lang="vi">Canh một buổi live</span></div>
+        <div class="ba-cell ba-before"><b><span lang="en">By hand</span><span lang="vi">Làm tay</span></b><span lang="en">Keep refreshing Ads Manager and work out ROI yourself.</span><span lang="vi">Liên tục refresh Ads Manager và tự tính ROI.</span></div>
+        <div class="ba-cell ba-after"><b><span lang="en">With GMV Max Rules</span><span lang="vi">Với GMV Max Rules</span></b><span lang="en">The monitor reads TikTok every 5 minutes: ROI against target, spend against budget, orders. LIVE rules adjust ROI target and budget while the stream runs.</span><span lang="vi">Monitor đọc TikTok mỗi 5 phút: ROI so với target, spend so với budget, đơn hàng. Rule LIVE đổi ROI target và budget ngay trong lúc live.</span></div>
+      </div>
+      <div class="ba-row reveal" data-g="team">
+        <div class="ba-job"><small>Team</small><span lang="en">Knowing who changed what</span><span lang="vi">Biết ai đã đổi gì</span></div>
+        <div class="ba-cell ba-before"><b><span lang="en">By hand</span><span lang="vi">Làm tay</span></b><span lang="en">Google Sheets and hard-coded scripts. Adding a rule means editing code, and there is no trace.</span><span lang="vi">Google Sheet và script viết cứng. Thêm rule là sửa code, và không có dấu vết nào.</span></div>
+        <div class="ba-cell ba-after"><b><span lang="en">With GMV Max Rules</span><span lang="vi">Với GMV Max Rules</span></b><span lang="en">Rules are data, accounts are created by an admin, and a change log records every action with its reason.</span><span lang="vi">Rule là dữ liệu, tài khoản do admin tạo, và nhật ký ghi lại mọi hành động kèm lý do.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Video GMV Max ============ -->
+<section class="area v" id="video">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="tag v">Video GMV Max</span>
+      <h2 class="display"><span lang="en">Stop filtering videos one by one.</span><span lang="vi">Đừng lọc từng video bằng tay nữa.</span></h2>
+      <p class="lede">
+        <span lang="en">Describe what a bad or a winning video looks like once. The app applies it every day, to every account you pick.</span>
+        <span lang="vi">Mô tả một lần thế nào là video tệ hay video thắng. App áp dụng mỗi ngày, cho mọi tài khoản bạn chọn.</span>
+      </p>
+    </div>
+    <p class="swipe-hint"><span lang="en">Swipe to see more →</span><span lang="vi">Vuốt để xem thêm →</span></p>
+
+    <div class="rows">
+      <div class="row reveal">
+        <div class="txt">
+          <h3><span lang="en">Rules are data, not code</span><span lang="vi">Rule là dữ liệu, không phải code</span></h3>
+          <p><span lang="en">Build a rule step by step. A plain-English sentence on the right tells you exactly what it will do, and you preview it on your numbers before saving.</span><span lang="vi">Tạo rule từng bước. Một câu mô tả bên phải cho bạn biết chính xác rule sẽ làm gì, và bạn xem trước trên số liệu của mình trước khi lưu.</span></p>
+          <ul>
+            <li><span lang="en">Conditions on spend, ROI, GMV, CTR, days of falling ROI and video age.</span><span lang="vi">Điều kiện theo spend, ROI, GMV, CTR, số ngày ROI giảm liên tục và tuổi video.</span></li>
+            <li><span lang="en">Actions: exclude a video, create, pause, raise or extend a boost — or just alert you.</span><span lang="vi">Hành động: loại video, tạo / tắt / tăng / gia hạn boost — hoặc chỉ báo cho bạn.</span></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="bezel amber"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-rule-builder.webp" width="1800" height="1125" alt="Rule builder: setting conditions with a live plain-English summary of the rule"></div></div>
+          <figcaption class="cap"><span lang="en">The rule builder, with the rule explained in plain English as you go.</span><span lang="vi">Màn hình tạo rule, rule được diễn giải bằng ngôn ngữ thường ngay khi bạn tạo.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="row flip reveal">
+        <div class="txt">
+          <h3><span lang="en">Act on a group of videos in three steps</span><span lang="vi">Xử lý cả nhóm video trong ba bước</span></h3>
+          <p><span lang="en">Quick actions skips the rule when you just need to move now: Choose, Check, Send. You see every change before anything is sent to TikTok.</span><span lang="vi">Quick actions bỏ qua rule khi bạn chỉ cần xử lý ngay: Choose, Check, Send. Bạn thấy mọi thay đổi trước khi bất cứ thứ gì được gửi sang TikTok.</span></p>
+          <ul>
+            <li><span lang="en">Paste up to 200 video IDs, or run a rule once.</span><span lang="vi">Dán tới 200 video ID, hoặc chạy một rule một lần.</span></li>
+            <li><span lang="en">Create boost, Kill boost, Raise budget, Extend boost, Exclude video.</span><span lang="vi">Create boost, Kill boost, Raise budget, Extend boost, Exclude video.</span></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="bezel amber"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-quick-actions.webp" width="1800" height="1125" alt="Quick actions: choose an ad account, paste video IDs and pick what should happen"></div></div>
+          <figcaption class="cap"><span lang="en">Quick actions: pick the account, the videos and the action.</span><span lang="vi">Quick actions: chọn tài khoản, video và hành động.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="row reveal">
+        <div class="txt">
+          <h3><span lang="en">Adjust budget and ROI where you read the numbers</span><span lang="vi">Chỉnh budget và ROI ngay chỗ bạn đọc số liệu</span></h3>
+          <p><span lang="en">Performance shows each campaign and product. Change the budget or ROI target in the table itself, with a history of every change.</span><span lang="vi">Performance hiển thị từng campaign và sản phẩm. Đổi budget hoặc ROI target ngay trên bảng, có lịch sử mọi thay đổi.</span></p>
+        </div>
+        <figure>
+          <div class="bezel amber"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-performance.webp" width="1800" height="1125" alt="Performance table with budget and ROI target editable per campaign and a change history"></div></div>
+          <figcaption class="cap">Performance</figcaption>
+        </figure>
+      </div>
+
+      <div class="row flip reveal">
+        <div class="txt">
+          <h3><span lang="en">Find the videos worth acting on</span><span lang="vi">Tìm đúng video đáng xử lý</span></h3>
+          <p><span lang="en">Filter videos by performance and send the result straight to Quick actions.</span><span lang="vi">Lọc video theo hiệu quả rồi chuyển thẳng sang Quick actions.</span></p>
+        </div>
+        <figure>
+          <div class="bezel amber"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-find-videos.webp" width="1800" height="1125" alt="Find videos: filter videos by performance then send them to Quick actions"></div></div>
+          <figcaption class="cap">Find videos</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE GMV Max ============ -->
+<section id="live">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="tag l">LIVE GMV Max</span>
+      <h2 class="display"><span lang="en">Let the stream run itself. You watch the numbers.</span><span lang="vi">Để buổi live tự chạy. Bạn chỉ cần xem số.</span></h2>
+      <p class="lede">
+        <span lang="en">Schedule it once, then follow ROI against target from your desk or your phone, and step in only when something needs a look.</span>
+        <span lang="vi">Lên lịch một lần, rồi theo dõi ROI so với target từ bàn làm việc hay điện thoại, và chỉ can thiệp khi có gì đó cần xem.</span>
+      </p>
+    </div>
+    <p class="swipe-hint"><span lang="en">Swipe to see more →</span><span lang="vi">Vuốt để xem thêm →</span></p>
+
+    <div class="rows">
+      <div class="row reveal">
+        <div class="txt">
+          <h3><span lang="en">A calendar that creates and switches off campaigns</span><span lang="vi">Cuốn lịch tự tạo và tự tắt campaign</span></h3>
+          <p><span lang="en">Each TikTok account has its own schedule. At start time the app creates the campaign; at the end it turns it off.</span><span lang="vi">Mỗi tài khoản TikTok có lịch riêng. Đến giờ app tự tạo campaign; hết giờ tự tắt.</span></p>
+          <ul>
+            <li><span lang="en">One LIVE campaign per account at a time.</span><span lang="vi">Mỗi tài khoản chỉ một campaign LIVE tại một thời điểm.</span></li>
+            <li><span lang="en">Session templates, and import of campaigns already made in Ads Manager.</span><span lang="vi">Template phiên live, và nhập campaign đã tạo sẵn trong Ads Manager.</span></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="bezel brand"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-live-schedule.webp" width="1800" height="1125" alt="LIVE schedule: livestream campaigns per TikTok account laid out by day"></div></div>
+          <figcaption class="cap"><span lang="en">The LIVE schedule, per TikTok account.</span><span lang="vi">Lịch LIVE theo từng tài khoản TikTok.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="row flip reveal">
+        <div class="txt">
+          <h3><span lang="en">See how the stream is doing, change it mid-stream</span><span lang="vi">Thấy buổi live đang ra sao, chỉnh ngay giữa chừng</span></h3>
+          <p><span lang="en">The monitor reads TikTok every 5 minutes: ROI against target, spend against budget, GMV and orders on one screen, with a change log that records the reason.</span><span lang="vi">Monitor đọc TikTok mỗi 5 phút: ROI so với target, spend so với budget, GMV và đơn hàng trên một màn hình, kèm nhật ký ghi rõ lý do.</span></p>
+          <ul>
+            <li><span lang="en">LIVE rules change ROI target and budget while the stream is running.</span><span lang="vi">Rule LIVE đổi ROI target và budget ngay trong lúc live.</span></li>
+            <li><span lang="en">Filters for streams that need a look, are on, planned or ended.</span><span lang="vi">Bộ lọc phiên cần xem, đang chạy, đã lên lịch hoặc đã kết thúc.</span></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="bezel brand"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-live-monitor.webp" width="1800" height="1125" alt="LIVE monitor: ROI against target, spend against budget, GMV and orders for a livestream"></div></div>
+          <figcaption class="cap"><span lang="en">The LIVE monitor on sample data.</span><span lang="vi">Monitor LIVE trên dữ liệu mẫu.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="row reveal">
+        <div class="txt">
+          <h3><span lang="en">A report for every session</span><span lang="vi">Báo cáo cho từng phiên live</span></h3>
+          <p><span lang="en">After the stream, compare sessions by spend, GMV, ROI and orders, so the next schedule is built on what actually worked.</span><span lang="vi">Sau buổi live, so sánh các phiên theo spend, GMV, ROI và đơn hàng, để lịch tiếp theo dựa trên thứ thật sự hiệu quả.</span></p>
+        </div>
+        <figure>
+          <div class="bezel brand"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/desktop-live-reports.webp" width="1800" height="1125" alt="LIVE reports: sessions compared by spend, GMV, ROI and orders"></div></div>
+          <figcaption class="cap"><span lang="en">LIVE reports, per session.</span><span lang="vi">Báo cáo LIVE theo phiên.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Everywhere ============ -->
+<section class="area" id="mobile">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow"><span lang="en">Anywhere you work</span><span lang="vi">Làm việc ở bất cứ đâu</span></span>
+      <h2 class="display"><span lang="en">The same app, in your pocket.</span><span lang="vi">Cùng một app, ngay trong túi.</span></h2>
+      <p class="lede">
+        <span lang="en">A bottom tab bar, forms that open as bottom sheets, and install-to-home-screen. Checking a stream no longer needs a laptop.</span>
+        <span lang="vi">Thanh tab dưới, form dạng bottom sheet và cài lên màn hình chính. Kiểm tra buổi live không cần mở laptop nữa.</span>
+      </p>
+    </div>
+
+    <figure class="phones reveal">
+      <div class="ph"><div class="bezel"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/mobile-overview.webp" width="600" height="1299" alt="Overview on a phone"></div></div></div>
+      <div class="ph"><div class="bezel"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/mobile-rules.webp" width="600" height="1299" alt="Rules on a phone"></div></div></div>
+      <div class="ph"><div class="bezel"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/mobile-quick-actions.webp" width="600" height="1299" alt="Quick actions on a phone"></div></div></div>
+      <div class="ph"><div class="bezel"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/mobile-live-schedule.webp" width="600" height="1299" alt="LIVE schedule on a phone"></div></div></div>
+      <div class="ph"><div class="bezel"><div class="core"><img loading="lazy" src="/gmvmax-tool/assets/mobile-live-monitor.webp" width="600" height="1299" alt="LIVE monitor on a phone"></div></div></div>
+    </figure>
+
+    <div class="extras">
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l6 2.5L11.5 20 21 4z"/></svg></div>
+        <h4><span lang="en">Your own Telegram bot</span><span lang="vi">Telegram bot riêng cho bạn</span></h4>
+        <p><span lang="en">A morning summary, error alerts, and the power to stop or run a rule from your phone.</span><span lang="vi">Tóm tắt mỗi sáng, cảnh báo lỗi, và dừng hoặc chạy rule ngay từ điện thoại.</span></p></div>
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13l-3-3M17 17H4l3 3"/></svg></div>
+        <h4><span lang="en">Switch account in one tap</span><span lang="vi">Đổi tài khoản một chạm</span></h4>
+        <p><span lang="en">Sign in with an email or a username, and move between ad accounts without leaving the page.</span><span lang="vi">Đăng nhập bằng email hoặc username, rồi chuyển giữa các tài khoản quảng cáo mà không rời trang.</span></p></div>
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <h4><span lang="en">Ask Claude for the numbers</span><span lang="vi">Hỏi số liệu ngay trong Claude</span></h4>
+        <p><span lang="en">A connector lets you ask GMV Max questions straight from a Claude chat.</span><span lang="vi">Một connector cho phép hỏi số liệu GMV Max trực tiếp trong Claude chat.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Safety ============ -->
+<section id="safety">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow"><span lang="en">Automation you can trust with a budget</span><span lang="vi">Tự động hoá đủ an toàn để giao ngân sách</span></span>
+      <h2 class="display"><span lang="en">Nothing goes live on faith.</span><span lang="vi">Không có gì chạy thật chỉ vì tin tưởng.</span></h2>
+      <p class="lede">
+        <span lang="en">Handing real ad spend to software only works with guardrails. These are the ones built in.</span>
+        <span lang="vi">Giao tiền ads thật cho phần mềm chỉ ổn khi có lớp an toàn. Đây là các lớp đã được dựng sẵn.</span>
+      </p>
+    </div>
+    <div class="safety" id="safety-list">
+      <details class="safe" open><summary><span lang="en">Dry run first</span><span lang="vi">Luôn dry run trước</span></summary><p><span lang="en">A new rule only logs what it would do. One successful dry run is required before it can go Live, and going Live asks you to confirm how many accounts it affects.</span><span lang="vi">Rule mới chỉ ghi lại việc sẽ làm. Phải có một lần dry run thành công mới được bật Live, và bật Live có hộp xác nhận ghi rõ số tài khoản bị ảnh hưởng.</span></p></details>
+      <details class="safe"><summary><span lang="en">Stop buttons at every level</span><span lang="vi">Nút dừng ở mọi tầng</span></summary><p><span lang="en">System, workspace (Pause all), ad account and each rule — and LIVE has its own switch.</span><span lang="vi">Hệ thống, workspace (Pause all), ad account và từng rule — LIVE có công tắc riêng.</span></p></details>
+      <details class="safe"><summary><span lang="en">Runs once, never twice</span><span lang="vi">Chạy một lần, không chạy hai</span></summary><p><span lang="en">Every action carries an idempotency key, and two jobs on the same account never run in parallel.</span><span lang="vi">Mỗi hành động có khoá idempotency, và hai job của cùng một tài khoản không bao giờ chạy song song.</span></p></details>
+      <details class="safe"><summary><span lang="en">Fails safe</span><span lang="vi">Lỗi thì tự dừng</span></summary><p><span lang="en">An account that errors three times in a row pauses itself and sends an alert.</span><span lang="vi">Tài khoản ghi lỗi 3 lần liên tiếp sẽ tự tạm dừng và báo ngay.</span></p></details>
+      <details class="safe"><summary><span lang="en">Tokens locked away</span><span lang="vi">Token được khoá kín</span></summary><p><span lang="en">TikTok and Telegram tokens live in Supabase Vault; the interface only ever shows the last four characters.</span><span lang="vi">Token TikTok và Telegram nằm trong Supabase Vault; giao diện chỉ hiện 4 ký tự cuối.</span></p></details>
+      <details class="safe"><summary><span lang="en">Workspaces are isolated</span><span lang="vi">Workspace tách biệt</span></summary><p><span lang="en">Row Level Security on every table, so each workspace only sees its own data.</span><span lang="vi">Row Level Security trên mọi bảng, mỗi workspace chỉ thấy dữ liệu của mình.</span></p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Built with ============ -->
+<section class="area" id="built" style="padding-block:56px">
+  <div class="wrap">
+    <div class="bezel reveal"><div class="core pad">
+      <div class="facts">
+        <div class="fact"><b class="tnum">~350</b><span><span lang="en">commits since 2 Oct 2026</span><span lang="vi">commit từ 02/10/2026</span></span></div>
+        <div class="fact"><b class="tnum">56</b><span><span lang="en">database migrations</span><span lang="vi">migration database</span></span></div>
+        <div class="fact"><b class="tnum">100+</b><span><span lang="en">test files, incl. parity with the old Apps Script</span><span lang="vi">file test, gồm đối chiếu với Apps Script cũ</span></span></div>
+        <div class="fact"><b class="tnum">80+</b><span><span lang="en">product decisions written down</span><span lang="vi">quyết định sản phẩm được ghi lại</span></span></div>
+      </div>
+      <ul class="stack">
+        <li>Next.js 15</li><li>TypeScript</li><li>Supabase · Postgres · RLS · Vault</li><li>pg_cron</li><li>TikTok Business API</li><li>Telegram Bot API</li><li>Vercel</li><li>Zod · Vitest · Playwright</li><li>MCP</li>
+      </ul>
+    </div></div>
+    <p class="cap" style="margin-top:16px">
+      <span lang="en">Product owner and ads operator: built with Claude Code, in daily use by my team since Oct 2026.</span>
+      <span lang="vi">Product owner kiêm người chạy ads: tự build cùng Claude Code, team đang dùng hằng ngày từ 10/2026.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ Closing reminder ============ -->
+<section class="final" id="start">
+  <div class="wrap">
+    <div class="final-box reveal">
+      <h2 class="display"><span lang="en">You have seen how it works. Now use it.</span><span lang="vi">Bạn đã xem cách nó hoạt động. Giờ hãy dùng thử.</span></h2>
+      <p>
+        <span lang="en">Click through the demo like a real user, then tell me how you want it to work for your shop or your team.</span>
+        <span lang="vi">Bấm thử demo như một user thật, rồi cho tôi biết bạn muốn nó chạy thế nào cho shop hay team của bạn.</span>
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-demo" data-demo href="/gmvmax-tool/demo" target="_blank" rel="noopener noreferrer">
+          <span class="live"><span lang="en">Try the live demo</span><span lang="vi">Dùng thử demo</span></span>
+          <span class="soon"><span lang="en">Demo coming soon</span><span lang="vi">Demo sắp có</span></span>
+          <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+        </a>
+        <a class="btn btn-hire" data-hire href="/">
+          <span lang="en">Hire me</span><span lang="vi">Thuê tôi</span>
+          <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+        </a>
+      </div>
+      <p class="contact">Thanh Bình (Howard) · <a href="https://zalo.me/0788351752" target="_blank" rel="noopener noreferrer">Zalo / Phone 0788 351 752</a></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Do Quang Thanh Binh</span>
+    <span><span lang="en">Demo data is fictional. Not affiliated with or endorsed by TikTok.</span><span lang="vi">Số liệu demo là giả. Không liên kết hay được TikTok bảo trợ.</span></span>
+  </div>
+</footer>
+
+<div class="zoom" id="zoom" role="dialog" aria-label="Screenshot"><button type="button" aria-label="Close">&times;</button><img alt=""></div>
+
+<script>
+/* ============ Config ============ */
+var CONFIG = {
+  demoUrl: "/gmvmax-tool/demo",   // "" => demo buttons show a "coming soon" state
+  hireUrl: "/"                    // main portfolio
+};
+
+(function(){
+  var root = document.documentElement;
+
+  document.querySelectorAll('[data-hire]').forEach(function(a){ a.href = CONFIG.hireUrl; });
+  document.querySelectorAll('[data-demo]').forEach(function(a){
+    if (CONFIG.demoUrl) { a.href = CONFIG.demoUrl; }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled','true'); a.setAttribute('tabindex','-1'); }
+  });
+  if (!CONFIG.demoUrl) root.classList.add('demo-soon');
+
+  /* ---- language ---- */
+  function setLang(l){
+    root.setAttribute('data-lang', l);
+    root.setAttribute('lang', l);
+    document.querySelectorAll('[data-lang-btn]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-lang-btn') === l ? 'true' : 'false');
+    });
+    try { localStorage.setItem('gmvmax-lang', l); } catch(e){}
+  }
+  document.querySelectorAll('[data-lang-btn]').forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang-btn')); });
+  });
+  var saved = null;
+  try { saved = localStorage.getItem('gmvmax-lang'); } catch(e){}
+  if (saved !== 'vi') saved = 'en'; // English by default; Vietnamese only when the visitor switches
+  setLang(saved);
+
+  /* ---- before/after group filter (mobile only; CSS ignores it on desktop) ---- */
+  var ba = document.querySelector('.ba');
+  document.querySelectorAll('.ba-tabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      ba.setAttribute('data-g', b.getAttribute('data-g'));
+      document.querySelectorAll('.ba-tabs button').forEach(function(o){ o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
+
+  /* ---- safety accordion: all open on wide screens, collapsed list on phones ---- */
+  var mq = window.matchMedia('(min-width:700px)');
+  function syncSafe(){
+    var all = document.querySelectorAll('.safe');
+    all.forEach(function(d, i){ d.open = mq.matches ? true : i === 0; });
+  }
+  syncSafe();
+  (mq.addEventListener ? mq.addEventListener('change', syncSafe) : mq.addListener(syncSafe));
+
+  /* ---- screenshot viewer ---- */
+  var zoom = document.getElementById('zoom'), zimg = zoom.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function(img){
+    img.addEventListener('click', function(){ zimg.src = img.currentSrc || img.src; zimg.alt = img.alt; zoom.classList.add('on'); zoom.scrollTop = 0; zoom.scrollLeft = 0; });
+  });
+  function closeZoom(){ zoom.classList.remove('on'); }
+  zoom.addEventListener('click', closeZoom);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeZoom(); });
+
+  /* ---- reveal ---- */
+  var els = [].slice.call(document.querySelectorAll('.reveal'));
+  function inView(el){
+    var r = el.getBoundingClientRect(), h = window.innerHeight || root.clientHeight;
+    return r.height > 0 && r.top < h * 0.92 && r.bottom > 0;
+  }
+  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(function(e){ if (inView(e)) e.classList.add('in'); else io.observe(e); });
+  window.addEventListener('load', function(){
+    els.forEach(function(e){ if (!e.classList.contains('in') && inView(e)) e.classList.add('in'); });
+  });
+})();
+</script>
+<script src="/gmvmax-tool/zalo.js" defer></script>
+</body>
+</html>
