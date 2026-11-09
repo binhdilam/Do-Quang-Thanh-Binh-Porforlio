@@ -220,7 +220,7 @@ function shell() {
   $('#top').innerHTML =
     '<div class="m-logo"><i>B</i>GMV Max</div>' +
     '<div class="crumb">' + ic('rules').replace('<svg', '<svg width="16" height="16"') + 'Workspace<span class="sep">›</span>' + (pg ? secName + '<span class="sep">›</span><b>' + pg + '</b>' : '<b>' + secName + '</b>') + '</div>' +
-    '<div class="top-r"><a class="link about" href="/gmvmax-tool">About this tool ' + ic('ext') + '</a><a class="btn hire sm" href="/">Hire me</a></div>';
+    '<div class="top-r"><a class="link about" href="/gmvmax-tool">About this tool ' + ic('ext') + '</a><a class="btn hire sm" href="/">My portfolio</a></div>';
   $('#banner').innerHTML = '<div class="banner"><span class="tag">DEMO</span><span>Sample data only. Nothing is sent to TikTok.</span><span class="sp"></span><button class="link" data-act="reset">' + ic('refresh') + 'Reset demo</button></div>';
 
   var tabs = route.sec === 'video' ? VT : route.sec === 'live' ? LT : null;
@@ -637,7 +637,7 @@ var A = {
   noop: function () { },
   close: function () { closeModal(); }, ovclose: function (id, t, e) { if (e.target === t) closeModal(); else return false; },
   reset: function () { try { localStorage.removeItem(KEY); } catch (e) { } S = fresh(); draft = null; qa = { step: 1, acct: 'a1', mode: 'ids', ids: '', rule: 1, act: 'create', err: '', res: null }; findSel = {}; closeModal(); toast('Demo reset'); go('#/video/overview'); render(); },
-  more: function () { modal('<div class="mh"><h3>More</h3><button class="x" data-act="close" aria-label="Close">' + ic('x') + '</button></div><button class="nav-i" data-go="#/notifications">' + ic('bell') + 'Notifications</button><button class="nav-i" data-go="#/settings">' + ic('cog') + 'Settings</button><a class="nav-i" href="/gmvmax-tool">' + ic('ext') + 'About this tool</a><a class="nav-i" href="/" style="font-weight:700">' + ic('ext') + 'Hire me</a>'); },
+  more: function () { modal('<div class="mh"><h3>More</h3><button class="x" data-act="close" aria-label="Close">' + ic('x') + '</button></div><button class="nav-i" data-go="#/notifications">' + ic('bell') + 'Notifications</button><button class="nav-i" data-go="#/settings">' + ic('cog') + 'Settings</button><a class="nav-i" href="/gmvmax-tool">' + ic('ext') + 'About this tool</a><a class="nav-i" href="/" style="font-weight:700">' + ic('ext') + 'My portfolio</a>'); },
   pauseall: function () { S.pausedAll = !S.pausedAll; save(); toast(S.pausedAll ? 'All rules paused' : 'Rules resumed'); render(); },
   pauseall2: function () { A.pauseall(); },
   toggle: function (id) { var r = S.rules.filter(function (x) { return x.id == id; })[0]; r.on = !r.on; addAct(r.name, 'Workspace', 'Rule turned ' + (r.on ? 'on' : 'off') + ' by Demo user', 'skip'); save(); render(); },
