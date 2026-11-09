@@ -10,7 +10,7 @@ interface FreeToolsProps {
 const TOOL_URL = "/tiktokgmvmaxreport.html";
 
 /**
- * GMV Max Rules lives on its own domains. Leave a value empty until that
+ * GMV Max Tool lives on its own domains. Leave a value empty until that
  * site is deployed: the button then shows a "coming soon" state instead of
  * a dead link.
  *  - GMV_DEMO_URL: the demo app itself (sample data, desktop + mobile)
@@ -45,7 +45,7 @@ const copy = {
           desc: "A PID report ranking every product ID and a KOC report ranking every creator, both by cost, orders and GMV contribution.",
         },
         {
-          title: "Full funnel annalytics",
+          title: "Full funnel analytics",
           desc: "Visualize the complete conversion journey with key metrics including 6s View Rate, CTR, Order CVR, and GMV, making it easy to pinpoint the biggest drop-off between each funnel stage.",
         },
         {
@@ -87,7 +87,7 @@ const copy = {
       ctaNote: "Sample data · no login · not connected to TikTok",
       more: "See how it works",
       mockLabel: "Interactive demo on sample data — laptop and phone",
-      mockAlt: "GMV Max Rules running on a laptop and a phone, showing the LIVE monitor and schedule",
+      mockAlt: "GMV Max Tool running on a laptop and a phone, showing the LIVE monitor and schedule",
     },
     disclaimerReport:
       "Shared as-is, with no warranty. It is not affiliated with or endorsed by TikTok. Tell me what breaks and I will fix it.",
@@ -159,7 +159,7 @@ const copy = {
       ctaNote: "Dữ liệu mẫu · không cần đăng nhập · không kết nối TikTok",
       more: "Xem chi tiết cách hoạt động",
       mockLabel: "Bản demo bấm được, dữ liệu mẫu — máy tính và điện thoại",
-      mockAlt: "GMV Max Rules chạy trên laptop và điện thoại, hiển thị Monitor LIVE và lịch LIVE",
+      mockAlt: "GMV Max Tool chạy trên laptop và điện thoại, hiển thị Monitor LIVE và lịch LIVE",
     },
     disclaimerReport:
       "Chia sẻ nguyên trạng, không kèm bảo hành. Công cụ không liên kết hay được TikTok bảo trợ. Gặp lỗi cứ báo tôi sửa.",

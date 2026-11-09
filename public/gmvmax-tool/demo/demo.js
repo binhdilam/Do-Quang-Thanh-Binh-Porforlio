@@ -1,4 +1,4 @@
-/* GMV Max Rules — clickable demo. Pure front-end, sample data, state kept in this browser only. */
+/* GMV Max Tool — clickable demo. Pure front-end, sample data, state kept in this browser only. */
 (function () {
 'use strict';
 
@@ -206,7 +206,7 @@ function go(h) { if (location.hash === h) render(); else location.hash = h; }
 function shell() {
   var nRules = S.rules.length;
   $('#side').innerHTML =
-    '<div class="logo"><i>B</i><div><b>GMV Max</b><span>RULES</span></div></div>' +
+    '<div class="logo"><i>B</i><div><b>GMV Max</b><span>TOOL</span></div></div>' +
     '<div class="ws"><i>D</i><div><b>Demo workspace</b><span>Advertising operations</span></div></div>' +
     '<div class="nav-h">GMV MAX</div>' +
     '<button class="nav-i' + (route.sec === 'video' ? ' on' : '') + '" data-go="#/video/overview">' + ic('film') + 'Video GMV Max<span class="n">' + nRules + '</span></button>' +
@@ -597,7 +597,7 @@ function render() {
   } else v = route.sec === 'accounts' ? vAccounts() : route.sec === 'notifications' ? vNotif() : vSettings();
   $('#view').innerHTML = v;
   var tw = $('.tl-wrap'); if (tw && S.ui.liveDay === 0 && tw.scrollWidth > tw.clientWidth) { var nl = $('.now-l', tw); if (nl) tw.scrollLeft = Math.max(0, nl.offsetLeft - tw.clientWidth * 0.6 + 92); }
-  document.title = 'GMV Max Rules — demo';
+  document.title = 'GMV Max Tool — demo';
 }
 function rerenderKeep() { var y = window.scrollY; render(); window.scrollTo(0, y); }
 window.addEventListener('hashchange', function () { closeModal(); render(); window.scrollTo(0, 0); });
