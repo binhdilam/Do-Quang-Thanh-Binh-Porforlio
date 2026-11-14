@@ -46,7 +46,7 @@ html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9fa; 
 #sidebar-toggle-btn { width:28px; height:28px; }
 /* Thanh công cụ của bảng: mọi control cùng cao 32px, không co/đè lên nhau */
 [id$="-search"], #vid-pid-filter, [id$="-filter-btn"], .export-btn,
-button[onclick^="resetFilters"], button[onclick*="pid-name-file-input"] {
+button[onclick^="resetFilters"], button[onclick*="pid-name-file-input"], button[onclick^="downloadTemplate"].tb {
   height:32px; flex:none; box-sizing:border-box; display:inline-flex; align-items:center; gap:4px;
   font-size:12px !important; padding:0 12px !important; border-radius:7px !important; white-space:nowrap;
 }
@@ -250,8 +250,15 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
 
     <div id="upload-result" style="display:none;margin-top:14px;"></div>
     <div style="background:white;border:1px solid #cbd8ef;border-radius:10px;padding:20px;margin-top:20px;">
-      <div style="font-weight:700;color:#185cff;margin-bottom:10px;font-size:13px;display:flex;align-items:center;gap:6px;">
+      <div style="font-weight:700;color:#185cff;margin-bottom:10px;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
         <span class="material-symbols-outlined" style="font-size:16px;">info</span> Cấu trúc cột cần có trong file
+        <span style="flex:1;"></span>
+        <button onclick="downloadTemplate('data')" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:#f3f3f4;color:#185cff;font-weight:700;display:inline-flex;align-items:center;gap:4px;" title="File mẫu đúng cột export TikTok Shop US, kèm sheet hướng dẫn">
+          <span class="material-symbols-outlined" style="font-size:14px;">download</span>Template file data
+        </button>
+        <button onclick="downloadTemplate('names')" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:#f3f3f4;color:#185cff;font-weight:700;display:inline-flex;align-items:center;gap:4px;" title="File mẫu Product ID + Product name để nhập tên sản phẩm ở PID Report">
+          <span class="material-symbols-outlined" style="font-size:14px;">download</span>Template tên sản phẩm
+        </button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
         <div style="background:#f3f3f4;padding:9px 12px;border-radius:7px;font-size:12px;"><strong>Campaign name / ID</strong><div style="color:#627086;font-size:11px;">Tên và ID chiến dịch</div></div>
@@ -389,6 +396,9 @@ th.sortable:hover { color:#185cff; background:#f0f5ff !important; }
             <span class="material-symbols-outlined" style="font-size:14px;">inventory_2</span>Nhập tên sản phẩm
           </button>
           <input type="file" id="pid-name-file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handlePidNameFile(this.files)"/>
+          <button class="tb" onclick="downloadTemplate('names')" style="font-size:11px;border:1px solid #cbd8ef;border-radius:6px;padding:5px 10px;cursor:pointer;background:white;color:#627086;" title="Tải file mẫu 2 cột Product ID + Product name để điền rồi bấm Nhập tên sản phẩm">
+            <span class="material-symbols-outlined" style="font-size:14px;">description</span>Template tên SP
+          </button>
           <button class="export-btn" onclick="exportPID()"><span class="material-symbols-outlined" style="font-size:14px;">download</span>Xuất XLSX</button>
         </div>
       </div>
@@ -1382,6 +1392,49 @@ function exportKOC() {
 // PID → PRODUCT NAME MAPPING (file phụ, không có trong export Ads)
 // ============================================================
 // TikTok Ads Manager export (Cost/GMV) không có cột tên sản phẩm.
+// Tải file mẫu (tạo ngay trên trình duyệt bằng SheetJS, không cần file ngoài).
+// Mọi ID ghi dạng text: ID 19 chữ số mà để dạng số thì Excel làm tròn và mất chính xác.
+function downloadTemplate(kind) {
+  const wb = XLSX.utils.book_new();
+  const addSheet = (name, aoa, widths) => {
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = widths.map(w => ({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  };
+  let filename;
+  if (kind === 'names') {
+    filename = 'template_ten_san_pham.xlsx';
+    addSheet('Product names', [
+      ['Product ID', 'Product name'],
+      ['1732588003873362431', 'Natural Pillow Mist for Deep Sleep - Lavender & Chamomile Sleep Spray'],
+      ['1732691655330927103', 'MINE Golden Crush Almond & Vanilla Hair & Body Perfume Mist'],
+    ], [24, 80]);
+    addSheet('Hướng dẫn', [
+      ['Cách dùng'],
+      ['1. Điền mỗi sản phẩm 1 dòng: cột A = Product ID (SPU ID), cột B = tên sản phẩm. Xóa 2 dòng ví dụ.'],
+      ['2. Cột Product ID phải để định dạng Text (không để Number), nếu không Excel sẽ làm tròn ID dài và không khớp.'],
+      ['3. Trong tool: PID Report > Nhập tên sản phẩm > chọn file này. Tên nạp xong sẽ ưu tiên hơn tên trong file data.'],
+    ], [110]);
+  } else {
+    filename = 'template_file_data_US.xlsx';
+    const head = ['Post ID','Creative','Campaign ID','Campaign name','SPU ID','Product name','TikTok account','Creative type','Time posted','Cost','SKU orders','Cost per order','Gross revenue','ROI','Product ad impressions','Product ad clicks','Product ad click rate','Ad conversion rate','2-second ad video view rate','6-second ad video view rate','25% ad video view rate','50% ad video view rate','75% ad video view rate','100% ad video view rate','Authorization type','Creative source','Exploration secondary status','Status','Currency'];
+    const card  = ['N/A','-','1879755878014097','Ten chien dich','1732588003873362431','Ten san pham','-','Product card','-',0,0,0,0,'0.00',0,0,0,0,'-','-','-','-','-','-','N/A','','Exploring','Exploring','VND'];
+    const video = ['7697476163257568543','Caption video #hashtag','1879755878014097','Ten chien dich','1732588003873362431','Ten san pham','TenKOC','Video','2026-10-16 22:39',0,0,0,0,'0.00',0,0,0,0,0,0,0,0,0,0,'TikTok Shop official account','','Exploring','Exploring','VND'];
+    addSheet('Sheet1', [head, card, video], head.map(h => Math.max(14, Math.min(h.length + 2, 28))));
+    addSheet('Hướng dẫn', [
+      ['Cách dùng'],
+      ['1. Dán dữ liệu export từ TikTok Shop US vào Sheet1 (giữ nguyên dòng tiêu đề). Tool chỉ đọc sheet đầu tiên.'],
+      ['2. Hai dòng ví dụ có Cost = 0 nên tool tự bỏ qua; có thể xóa.'],
+      ['3. Cột bắt buộc: Post ID, SPU ID, Creative type, Cost, Gross revenue. Các cột khác có thể thiếu nhưng báo cáo sẽ thiếu số liệu tương ứng.'],
+      ['4. Creative type: "Video" hoặc "Product card". Product card để Post ID = N/A.'],
+      ['5. Post ID, SPU ID, Campaign ID để định dạng Text (ID dài, để Number Excel sẽ làm tròn).'],
+      ['6. Time posted dạng YYYY-MM-DD HH:mm (hoặc "-" với Product card). Các tỉ lệ (click rate, view rate) là số thập phân 0–1, VD 0.0046.'],
+      ['7. Khoảng ngày trên báo cáo lấy từ tên file, VD: Creative data 2026-10-17 - 2026-10-25 - Product 0.xlsx'],
+    ], [120]);
+  }
+  XLSX.writeFile(wb, filename);
+}
+
 // Cho phép nạp thêm file "Danh sách sản phẩm" (export từ Seller Center > Sản phẩm,
 // hoặc bất kỳ file nào có 2 cột Product ID + Product name) để ghép tên vào PID Report.
 function handlePidNameFile(files) {
@@ -1396,16 +1449,21 @@ function handlePidNameFile(files) {
       const sn = wb.SheetNames[0];
       const json = XLSX.utils.sheet_to_json(wb.Sheets[sn], {defval:''});
       const get=(row,...keys)=>{for(const k of keys){const f=Object.keys(row).find(rk=>rk.toLowerCase().trim()===k.toLowerCase().trim());if(f!==undefined&&row[f]!==''&&row[f]!==null&&row[f]!==undefined)return row[f];}return '';};
-      let matched=0;
+      let matched=0, rounded=0;
+      const known=new Set(rawRows.map(r=>String(r.product_id)));
+      let inReport=0;
       json.forEach(row=>{
-        const pid = String(get(row,'Product ID','product id','PID','pid','SPU ID','spu id')||'').trim();
+        const rawPid = get(row,'Product ID','product id','PID','pid','SPU ID','spu id');
+        if (typeof rawPid==='number' && rawPid>Number.MAX_SAFE_INTEGER) { rounded++; return; } // ID số bị Excel làm tròn → sẽ không khớp
+        const pid = String(rawPid||'').trim();
         const name = String(get(row,'Product name','product name','Tên sản phẩm','SPU name','spu name','item name','product title')||'').trim();
-        if (pid && name) { pidNameMap.set(pid, name); matched++; }
+        if (pid && name) { pidNameMap.set(pid, name); matched++; if (known.has(pid)) inReport++; }
       });
+      const roundedMsg = rounded ? ` <span style="color:#ba1a1a;">${rounded} dòng bị bỏ vì Product ID là số đã bị Excel làm tròn — hãy đặt cột Product ID định dạng Text.</span>` : '';
       if (matched===0) {
-        statusEl.innerHTML = `<span style="color:#ba1a1a;">Không tìm thấy cột Product ID + Product name hợp lệ trong file này.</span>`;
+        statusEl.innerHTML = `<span style="color:#ba1a1a;">Không tìm thấy cột Product ID + Product name hợp lệ trong file này.</span>${roundedMsg}`;
       } else {
-        statusEl.innerHTML = `<span style="color:#16a34a;">Đã nạp ${matched} tên sản phẩm.</span>`;
+        statusEl.innerHTML = `<span style="color:#16a34a;">Đã nạp ${matched} tên sản phẩm` + (rawRows.length ? `, ${inReport} khớp PID trong report.` : '.') + `</span>${roundedMsg}`;
         if (rawRows.length) renderPID();
       }
     } catch(err) {
