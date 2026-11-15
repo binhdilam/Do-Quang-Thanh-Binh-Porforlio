@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Howard Do Performance Marketing logo">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#347E65"/><stop offset="0.39" stop-color="#145540"/><stop offset="0.75" stop-color="#063A2B"/><stop offset="1" stop-color="#0B4F3A"/></linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="0.3" y2="1"><stop stop-color="#FFFFFF"/><stop offset="0.6" stop-color="#F5FAF2"/><stop offset="1" stop-color="#B7D5C4"/></linearGradient>
+  <linearGradient id="arrow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="0.6" stop-color="#F7FAF1"/><stop offset="1" stop-color="#E1F0DD"/></linearGradient>
+  <clipPath id="tileClip"><rect x="5" y="5" width="1014" height="1014" rx="250"/></clipPath>
+</defs>
+<rect x="5" y="5" width="1014" height="1014" rx="250" fill="url(#bg)"/>
+<g clip-path="url(#tileClip)">
+  <path d="M318 268H400Q444 268 444 315V813H302Q252 813 252 763V334Q252 268 318 268Z" fill="url(#bar)"/>
+  <rect x="466" y="646" width="59" height="167" rx="18" fill="url(#bar)"/>
+  <rect x="550" y="591" width="60" height="222" rx="18" fill="url(#bar)"/>
+  <path d="M636 533L778 432V756Q778 813 723 813H636Z" fill="url(#bar)"/>
+  <path d="M260 738C226 646 310 588 441 526C579 459 676 400 727 305L610 299L834 176L823 413L778 349C705 484 580 572 414 630C309 665 268 691 260 781C252 765 253 747 260 738Z" fill="url(#arrow)"/>
+  <path d="M260 780C254 739 269 698 329 665C450 612 620 572 731 431C656 538 533 584 402 634C309 670 264 706 260 780Z" fill="#7BAD96" opacity="0.52"/>
+</g>
+</svg>

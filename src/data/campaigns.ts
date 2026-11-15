@@ -77,15 +77,15 @@ export const showcaseItems: ShowcaseItem[] = [
       vi: "16 chiến dịch video thủ công giữ ROAS 9.54x",
     },
     note: {
-      en: "Two-month push across a full product catalogue. Spend scaled without letting blended ROAS slip below 9x — the top campaign in the account closed at 19.31x.",
-      vi: "Chiến dịch đẩy 2 tháng trên toàn bộ danh mục sản phẩm. Tăng ngân sách nhưng ROAS tổng vẫn giữ trên 9x — chiến dịch tốt nhất tài khoản đạt 19.31x.",
+      en: "Two-month push across a full product catalogue. Spend scaled without letting T-Roas slip below 9x — the top campaign in the account closed at 19.31x.",
+      vi: "Chiến dịch đẩy 2 tháng trên toàn bộ danh mục sản phẩm. Tăng ngân sách nhưng T-Roas vẫn giữ trên 9x — chiến dịch tốt nhất tài khoản đạt 19.31x.",
     },
     alt: {
       en: "TikTok Ads Manager report showing 16 campaigns with 179,817,302 VND cost and 1,715,554,567 VND gross revenue at 9.54 ROAS",
       vi: "Báo cáo TikTok Ads Manager: 16 chiến dịch, chi phí 179.817.302đ, doanh thu 1.715.554.567đ, ROAS 9.54",
     },
     stats: [
-      { label: { en: "Blended ROAS", vi: "ROAS tổng" }, value: "9.54x", hero: true },
+      { label: { en: "T-Roas", vi: "T-Roas" }, value: "9.54x", hero: true },
       { label: { en: "Ad spend", vi: "Chi phí" }, value: "179,817,302₫" },
       { label: { en: "Gross revenue", vi: "Doanh thu" }, value: "1,715,554,567₫" },
       { label: { en: "Impressions", vi: "Lượt hiển thị" }, value: "2,194,314" },

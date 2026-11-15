@@ -59,9 +59,13 @@ export default function Header({
               className="flex shrink-0 items-center gap-2.5"
               aria-label="Howard Do — back to top"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand font-display text-base font-bold text-paper">
-                H
-              </span>
+              <img
+                src="/logo-icon-128.png"
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 shrink-0"
+              />
               <span className="hidden text-sm font-semibold tracking-tight text-ink md:block">
                 Howard Do
               </span>

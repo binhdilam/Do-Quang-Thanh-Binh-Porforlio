@@ -48,9 +48,13 @@ export default function Footer({ lang, handleScrollTo }: FooterProps) {
           {/* Identity */}
           <div className="lg:col-span-5">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand font-display text-base font-bold text-paper">
-                H
-              </span>
+              <img
+                src="/logo-icon-128.png"
+                alt=""
+                width={36}
+                height={36}
+                className="h-9 w-9 shrink-0"
+              />
               <div>
                 <p className="text-sm font-semibold tracking-tight text-ink">
                   Do Quang Thanh Binh

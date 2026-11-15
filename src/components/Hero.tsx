@@ -12,7 +12,7 @@ const HEADLINE_STATS = [
   {
     value: "9.54x",
     tone: "amber",
-    label: { en: "Blended ROAS", vi: "ROAS tổng" },
+    label: { en: "T-Roas", vi: "T-Roas" },
     sub: { en: "16 TikTok campaigns, 2 months", vi: "16 chiến dịch TikTok, 2 tháng" },
   },
   {
